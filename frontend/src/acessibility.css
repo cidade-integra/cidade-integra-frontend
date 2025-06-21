@@ -1,0 +1,131 @@
+/* Estilos globais de acessibilidade */
+
+/* Classe para elementos visualmente ocultos mas acessíveis a leitores de tela */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Melhorar contraste para elementos focados */
+*:focus-visible {
+  outline: 2px solid #10b981; /* cor verde do projeto */
+  outline-offset: 2px;
+}
+
+/* Estilos para navegação por teclado */
+.keyboard-navigation *:focus {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* Remover outline padrão apenas quando não há navegação por teclado */
+.mouse-navigation *:focus {
+  outline: none;
+}
+
+/* Melhorar visibilidade de links */
+a:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Estilos para botões com foco */
+button:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* Estilos para inputs com foco */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+  border-color: #10b981;
+}
+
+/* Melhorar contraste para texto de erro */
+[role="alert"] {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+/* Estilos para elementos com aria-current */
+[aria-current="page"] {
+  font-weight: 600;
+}
+
+/* Melhorar visibilidade de elementos interativos */
+[role="button"],
+[role="menuitem"],
+[role="tab"],
+[role="option"] {
+  cursor: pointer;
+}
+
+/* Estilos para elementos desabilitados */
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Melhorar contraste para placeholders */
+::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+/* Estilos para modo de alto contraste */
+@media (prefers-contrast: high) {
+  * {
+    border-color: currentColor;
+  }
+  
+  button,
+  input,
+  select,
+  textarea {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Estilos para redução de movimento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Melhorar legibilidade do texto */
+@media (prefers-contrast: more) {
+  body {
+    background-color: white;
+    color: black;
+  }
+}
+
+/* Estilos para modo escuro com melhor contraste */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --focus-color: #34d399; /* verde mais claro para modo escuro */
+  }
+  
+  *:focus-visible {
+    outline-color: var(--focus-color);
+  }
+}
+
