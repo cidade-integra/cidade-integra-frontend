@@ -50,11 +50,26 @@ const Navbar = () => {
     }
   };
 
+  //função para lidar com navegação por teclado
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape" && isOpen) {
+      setIsOpen(false);
+    }
+  };
+
   // evita rolagem do fundo com menu mobile aberto
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  //adiciona evento de teclado para tecla escape
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen]);
 

@@ -3,20 +3,29 @@ import { Separator } from "@/components/ui/separator";
 import DenunciaStatusBadge from "@/components/denuncias/DenunciaStatusBadge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { MapPin, Calendar, ArrowLeft, MessageSquare, User } from "lucide-react";
+import { MapPin, Calendar, ArrowLeft, MessageSquare, User, Trash2 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { useReport } from "@/hooks/useReport";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import ComentarioCard from "@/components/denuncias/ComentarioCard";
 import { useEffect, useState } from "react";
 import { useFetchUser } from "@/hooks/useFetchUser";
+import { useToast } from "@/hooks/use-toast";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import ConfirmDeleteModal from "@/components/ui/confirm-delete-modal";
 
 const DenunciaDetalhes = () => {
   const { id } = useParams();
-  const { getReportById, loading: isLoading } = useReport();
+  const navigate = useNavigate();
+  const { getReportById, deleteReport, loading: isLoading } = useReport();
   const [denuncia, setDenuncia] = useState(null);
   const { user } = useFetchUser(denuncia?.userId);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
+  const { currentUser, currentUserData, loading: loadingUserData } = useCurrentUser();
+  const uid = currentUser?.uid;
 
   useEffect(() => {
     let isMounted = true;
@@ -28,6 +37,40 @@ const DenunciaDetalhes = () => {
     return () => { isMounted = false; };
     // Remova getReportById das dependências
   }, [id]);
+
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteReport(id);
+      toast({
+        title: "Denúncia excluída com sucesso!",
+        description: "A denúncia foi removida do sistema.",
+        variant: "default",
+      });
+      setTimeout(() => {
+        navigate("/denuncias")
+      }, 1000);
+    } catch (error) {
+      console.error("Error deleting report:", error);
+      toast({
+        title: "❌ Erro ao excluir denúncia",
+        description: "Ocorreu um erro ao tentar excluir a denúncia. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+    }
+  }
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+  }
+
 
   if (isLoading) {
     return (
@@ -207,6 +250,20 @@ const DenunciaDetalhes = () => {
                   <Button variant="outline" className="w-full">
                     Compartilhar
                   </Button>
+
+                  {uid &&
+                  denuncia && !denuncia.isAnonymous &&
+                  (uid === denuncia.userId  || currentUserData?.role === "admin") &&
+                   (
+                    <Button
+                      variant="destructive"
+                      className="w-full"
+                      onClick={handleDeleteClick}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      <span>Excluir Denúncia</span>
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -214,6 +271,17 @@ const DenunciaDetalhes = () => {
         </div>
       </main>
       <Footer />
+
+      {/* Modal de confirmação de exclusão */}
+      <ConfirmDeleteModal
+        isOpen={showDeleteModal}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        title="Excluir Denúncia?"
+        //description="Você tem certeza que deseja excluir esta denúncia?"
+        itemName="denúncia"
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

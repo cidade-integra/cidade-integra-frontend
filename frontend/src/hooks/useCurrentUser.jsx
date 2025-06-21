@@ -7,6 +7,7 @@ export function useCurrentUser() {
   const { user, loading, error } = useFetchUser(currentUser?.uid)
 
   return {
+    currentUser,
     user,
     loading,
     error,
