@@ -17,6 +17,7 @@ import AccessDeniedPage from "../pages/AccessDeniedPage"
 import AdminRoute from "./AdminRoute";
 import AdminDashboardPage from "../pages/AdminDashboardPage";
 import UsersAdminPage from "../pages/UsersAdminPage";
+import FaqPage from "@/pages/Faq";
 
 export default function AppRoutes() {
   return (
@@ -35,6 +36,7 @@ export default function AppRoutes() {
           <Route path="/sobre" element={<SobrePage />} />
           <Route path="/duvidas" element={<FAQPage />} />
           <Route path="/acesso-negado" element={<AccessDeniedPage />} />
+          <Route path="/duvidas-frequentes" element={<FaqPage />} />
 
           {/* rotas protegidas */}
   

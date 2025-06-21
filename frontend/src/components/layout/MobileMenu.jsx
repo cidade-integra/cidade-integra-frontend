@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom"
-import { Button } from "@/components/ui/button"
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import {
   Home,
   Bell,
@@ -9,7 +9,8 @@ import {
   LogOut,
   Plus,
   BookOpen,
-} from "lucide-react"
+  HelpCircle, // novo ícone
+} from "lucide-react";
 
 const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
   return (
@@ -43,10 +44,21 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
 
       <Link
         to="/duvidas"
+        onClick={onClickItem}
         className="hover:text-verde transition-colors py-2 flex items-center gap-2"
       >
         <BookOpen size={18} />
         <span>Dúvidas</span>
+      </Link>
+
+      {/* Novo link para Dúvidas Frequentes (FAQ) */}
+      <Link
+        to="/duvidas-frequentes"
+        onClick={onClickItem}
+        className="hover:text-verde transition-colors py-2 flex items-center gap-2"
+      >
+        <HelpCircle size={18} />
+        <span>FAQ</span>
       </Link>
 
       {!user && (
@@ -106,7 +118,7 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
         </Button>
       )}
     </>
-  )
-}
+  );
+};
 
-export default MobileMenu
+export default MobileMenu;
