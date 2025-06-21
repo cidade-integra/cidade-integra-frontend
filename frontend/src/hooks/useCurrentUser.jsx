@@ -8,7 +8,7 @@ export function useCurrentUser() {
 
   return {
     currentUser,
-    currentUserData: user,
+    user,
     loading,
     error,
   }
