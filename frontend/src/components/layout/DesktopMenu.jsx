@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import {
   Home,
@@ -12,11 +12,30 @@ import {
 } from "lucide-react"
 
 const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
+    const location = useLocation()
+
+  //função para verificar se o link está ativo
+  const isActive = (path) => {
+    if(path === "/") {
+      return location.pathname === "/"
+  }
+  return location.pathname.startsWith(path)
+  }
+
+  //função para adicionar classe ativa e inativa
+  const getLinkClasses = (path) => {
+    const baseClasses = 
+    'transition-colors flex items-center gap-1 px-3 py-2 rounded-md'
+    const activeClasses = 'text-verde bg-verde/15 font-semibold'
+    const inactiveClasses = 'hover:text-verde hover:bg-verde/5'
+    return `${baseClasses} ${isActive(path) ? activeClasses : inactiveClasses}`
+  }
+
   return (
     <>
       <Link
         to="/"
-        className="hover:text-verde transition-colors flex items-center gap-1"
+        className={getLinkClasses("/")}
       >
         <Home size={18} />
         <span>Início</span>
@@ -24,7 +43,7 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
 
       <Link
         to="/denuncias"
-        className="hover:text-verde transition-colors flex items-center gap-1"
+        className={getLinkClasses("/denuncias")}
       >
         <Bell size={18} />
         <span>Denúncias</span>
@@ -32,7 +51,7 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
 
       <Link
         to="/sobre"
-        className="hover:text-verde transition-colors flex items-center gap-1"
+        className={getLinkClasses("/sobre")}
       >
         <User size={18} />
         <span>Sobre</span>
@@ -40,7 +59,7 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
 
       <Link
         to="/duvidas"
-        className="hover:text-verde transition-colors flex items-center gap-1"
+        className={getLinkClasses("/duvidas")}
       >
         <BookOpen size={18} />
         <span>Dúvidas</span>
@@ -49,7 +68,7 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
       {!user && (
         <Link
           to="/login"
-          className="hover:text-verde transition-colors flex items-center gap-1"
+          className={getLinkClasses("/login")}
         >
           <LogIn size={18} />
           <span>Entrar</span>
@@ -60,7 +79,7 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
         <>
           <Link
             to="/perfil"
-            className="hover:text-verde transition-colors flex items-center gap-1"
+            className={getLinkClasses("/perfil")}
           >
             <User size={18} />
             <span>Perfil</span>
@@ -69,7 +88,7 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
           {user.role === "admin" && (
             <Link
               to="/admin"
-              className="hover:text-verde transition-colors flex items-center gap-1"
+              className={getLinkClasses("/admin")}
             >
               <Shield size={18} />
               <span>Admin</span>

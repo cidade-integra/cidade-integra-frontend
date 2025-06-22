@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import {
   Home,
@@ -12,12 +12,30 @@ import {
 } from "lucide-react"
 
 const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
+      const location = useLocation()
+
+  //função para verificar se o link está ativo
+  const isActive = (path) => {
+    if(path === "/") {
+      return location.pathname === "/"
+  }
+  return location.pathname.startsWith(path)
+  }
+
+  //função para adicionar classe ativa e inativa
+  const getLinkClasses = (path) => {
+    const baseClasses = 
+    'transition-colors flex items-center gap-1 px-3 py-2 rounded-md'
+    const activeClasses = 'text-verde bg-verde/15 font-semibold'
+    const inactiveClasses = 'hover:text-verde hover:bg-verde/5'
+    return `${baseClasses} ${isActive(path) ? activeClasses : inactiveClasses}`
+  }
   return (
     <>
       <Link
         to="/"
         onClick={onClickItem}
-        className="hover:text-verde transition-colors py-2 flex items-center gap-2"
+        className={getLinkClasses("/")}
       >
         <Home size={18} />
         <span>Início</span>
@@ -26,7 +44,7 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
       <Link
         to="/denuncias"
         onClick={onClickItem}
-        className="hover:text-verde transition-colors py-2 flex items-center gap-2"
+        className={getLinkClasses("/denuncias")}
       >
         <Bell size={18} />
         <span>Denúncias</span>
@@ -35,7 +53,7 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
       <Link
         to="/sobre"
         onClick={onClickItem}
-        className="hover:text-verde transition-colors py-2 flex items-center gap-2"
+        className={getLinkClasses("/sobre")}
       >
         <User size={18} />
         <span>Sobre</span>
@@ -43,7 +61,7 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
 
       <Link
         to="/duvidas"
-        className="hover:text-verde transition-colors py-2 flex items-center gap-2"
+        className={getLinkClasses("/duvidas")}
       >
         <BookOpen size={18} />
         <span>Dúvidas</span>
@@ -53,7 +71,7 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
         <Link
           to="/login"
           onClick={onClickItem}
-          className="hover:text-verde transition-colors py-2 flex items-center gap-2"
+          className={getLinkClasses("/login")}
         >
           <LogIn size={18} />
           <span>Entrar</span>
@@ -65,7 +83,7 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
           <Link
             to="/perfil"
             onClick={onClickItem}
-            className="hover:text-verde transition-colors py-2 flex items-center gap-2"
+            className={getLinkClasses("/perfil")}
           >
             <User size={18} />
             <span>Perfil</span>
@@ -75,7 +93,7 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
             <Link
               to="/admin"
               onClick={onClickItem}
-              className="hover:text-verde transition-colors py-2 flex items-center gap-2"
+              className={getLinkClasses("/admin")}
             >
               <Shield size={18} />
               <span>Admin</span>
