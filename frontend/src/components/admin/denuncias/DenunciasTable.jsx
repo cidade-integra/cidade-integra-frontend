@@ -13,11 +13,24 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import DenunciaStatusBadge from "@/components/denuncias/DenunciaStatusBadge";
 import { useReport } from "@/hooks/useReport";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 const DenunciasTable = ({ denuncias, setDenuncias }) => {
   const { markAsResolved, markAsRejected, markAsInReview, loading } =
     useReport();
   const { toast } = useToast();
+
+  // Estado para controlar o modal
+  const [modalRejeitar, setModalRejeitar] = useState({
+    open: false,
+    reportId: null,
+  });
 
   // função para lidar com a atualização do status
   const handleUpdateStatus = async (id, status) => {
@@ -146,6 +159,13 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                         handleUpdateStatus(denuncia.reportId, "rejected")
                       }
                       disabled={loading} // desabilita o botão enquanto o status está sendo atualizado
+
+                        setModalRejeitar({
+                          open: true,
+                          reportId: denuncia.reportId,
+                        })
+                      }
+
                     >
                       {loading ? (
                         <Loader2 className="h-4 w-4 mr-1 animate-spin" />
@@ -158,9 +178,41 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                 </TableRow>
               ))
             )}
-          </>
-        </TableBody>
-      </Table>
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Modal de confirmação */}
+      <Dialog
+        open={modalRejeitar.open}
+        onOpenChange={(open) => setModalRejeitar((v) => ({ ...v, open }))}
+      >
+        <DialogContent>
+          <DialogTitle>Confirmar rejeição</DialogTitle>
+          <DialogDescription>
+            Tem certeza que deseja marcar esta denúncia como <b>rejeitada</b>?
+          </DialogDescription>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setModalRejeitar({ open: false, reportId: null })}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                await handleUpdateStatus(modalRejeitar.reportId, "rejected");
+                setModalRejeitar({ open: false, reportId: null });
+              }}
+              disabled={loading}
+            >
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };
