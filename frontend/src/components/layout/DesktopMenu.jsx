@@ -11,8 +11,10 @@ import {
   BookOpen,
 } from "lucide-react"
 
+
 const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
-    const location = useLocation()
+
+  const location = useLocation()
 
   //função para verificar se o link está ativo
   const isActive = (path) => {
@@ -20,6 +22,14 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
       return location.pathname === "/"
   }
   return location.pathname.startsWith(path)
+  }
+
+//função para verificar se a rota está ativa
+  const isActiveRoute = (path) => {
+    if (path === "/") {
+      return location.pathname === "/"
+    }
+    return location.pathname.startsWith(path)
   }
 
   //função para adicionar classe ativa e inativa
@@ -36,32 +46,50 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
       <Link
         to="/"
         className={getLinkClasses("/")}
+        role="menuitem"
+        aria-label="Navegar para a página inicial"
+        aria-current={isActiveRoute("/") ? "page" : undefined}
+        tabIndex={0}
       >
-        <Home size={18} />
+        <Home size={18} aria-hidden="true" />
         <span>Início</span>
       </Link>
 
       <Link
         to="/denuncias"
         className={getLinkClasses("/denuncias")}
+        role="menuitem"
+        aria-label="Navegar para a página de denúncias"
+        aria-current={isActiveRoute("/denuncias") ? "page" : undefined}
+        tabIndex={0}
+
       >
-        <Bell size={18} />
+        <Bell size={18} aria-hidden="true" />
         <span>Denúncias</span>
       </Link>
 
       <Link
         to="/sobre"
         className={getLinkClasses("/sobre")}
+        role="menuitem"
+        aria-label="Navegar para a página sobre o projeto"
+        aria-current={isActiveRoute("/sobre") ? "page" : undefined}
+        tabIndex={0}
+
       >
-        <User size={18} />
+        <User size={18} aria-hidden="true" />
         <span>Sobre</span>
       </Link>
 
       <Link
         to="/duvidas"
         className={getLinkClasses("/duvidas")}
+        role="menuitem"
+        aria-label="Navegar para a página de dúvidas frequentes"
+        aria-current={isActiveRoute("/duvidas") ? "page" : undefined}
+        tabIndex={0}
       >
-        <BookOpen size={18} />
+        <BookOpen size={18} aria-hidden="true" />
         <span>Dúvidas</span>
       </Link>
 
@@ -69,8 +97,12 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
         <Link
           to="/login"
           className={getLinkClasses("/login")}
+          role="menuitem"
+          aria-label="Navegar para a página de login"
+          aria-current={isActiveRoute("/login") ? "page" : undefined}
+          tabIndex={0}
         >
-          <LogIn size={18} />
+          <LogIn size={18} aria-hidden="true" />
           <span>Entrar</span>
         </Link>
       )}
@@ -80,8 +112,12 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
           <Link
             to="/perfil"
             className={getLinkClasses("/perfil")}
+            role="menuitem"
+            aria-label="Navegar para o perfil do usuário"
+            aria-current={isActiveRoute("/perfil") ? "page" : undefined}
+            tabIndex={0}
           >
-            <User size={18} />
+            <User size={18} aria-hidden="true" />
             <span>Perfil</span>
           </Link>
           
@@ -89,8 +125,12 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
             <Link
               to="/admin"
               className={getLinkClasses("/admin")}
+              role="menuitem"
+              aria-label="Navegar para o painel administrativo"
+              aria-current={isActiveRoute("/admin") ? "page" : undefined}
+              tabIndex={0}
             >
-              <Shield size={18} />
+              <Shield size={18} aria-hidden="true" />
               <span>Admin</span>
             </Link>
           )}
