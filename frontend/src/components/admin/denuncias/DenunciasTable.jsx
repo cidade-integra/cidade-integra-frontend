@@ -1,14 +1,22 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, CheckCircle, XCircle, Loader2 } from "lucide-react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import DenunciaStatusBadge from "@/components/denuncias/DenunciaStatusBadge";
-import { useReport } from "@/hooks/useReport";
+import { useReportStatus } from "@/hooks/useReportStatus";
 
 const DenunciasTable = ({ denuncias, setDenuncias }) => {
-  const { markAsResolved, markAsRejected, markAsInReview, loading } = useReport();
+  const { markAsResolved, markAsRejected, markAsInReview, loading } =
+    useReportStatus();
   const { toast } = useToast();
 
   // função para lidar com a atualização do status
@@ -17,6 +25,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
 
     try {
       // Atualiza o status no banco de dados
+
       if (status === "resolved") {
         await markAsResolved(id);
       } else if (status === "review") {
@@ -64,17 +73,27 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
         <TableBody>
           {denuncias.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+              <TableCell
+                colSpan={6}
+                className="text-center py-10 text-muted-foreground"
+              >
                 Nenhuma denúncia encontrada.
               </TableCell>
             </TableRow>
           ) : (
             denuncias.map((denuncia) => (
-              <TableRow key={denuncia.reportId}> {/* Alterado para 'reportId' */}
-                <TableCell className="font-medium">{denuncia.reportId}</TableCell>
+              <TableRow key={denuncia.reportId}>
+                {/* Alterado para 'reportId' */}
+                <TableCell className="font-medium">
+                  {denuncia.reportId}
+                </TableCell>
                 <TableCell>{denuncia.title}</TableCell>
                 <TableCell>{denuncia.location?.address}</TableCell>
-                <TableCell>{new Date(denuncia.createdAt?.seconds * 1000).toLocaleDateString('pt-BR')}</TableCell>
+                <TableCell>
+                  {new Date(
+                    denuncia.createdAt?.seconds * 1000
+                  ).toLocaleDateString("pt-BR")}
+                </TableCell>
                 <TableCell>
                   <DenunciaStatusBadge status={denuncia.status} />
                 </TableCell>
@@ -90,10 +109,16 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                     variant="ghost"
                     size="sm"
                     className="text-blue-500 hover:bg-blue-500/10 hover:text-blue-500"
-                    onClick={() => handleUpdateStatus(denuncia.reportId, "review")}
+                    onClick={() =>
+                      handleUpdateStatus(denuncia.reportId, "review")
+                    }
                     disabled={loading} // desabilita o botão enquanto o status está sendo atualizado
                   >
-                    {loading ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <XCircle className="h-4 w-4 mr-1" />}
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                    ) : (
+                      <XCircle className="h-4 w-4 mr-1" />
+                    )}
                     Em Análise
                   </Button>
 
@@ -101,10 +126,16 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                     variant="ghost"
                     size="sm"
                     className="text-verde hover:text-verde hover:bg-verde/10"
-                    onClick={() => handleUpdateStatus(denuncia.reportId, "resolved")}
+                    onClick={() =>
+                      handleUpdateStatus(denuncia.reportId, "resolved")
+                    }
                     disabled={loading} // desabilita o botão enquanto o status está sendo atualizado
                   >
-                    {loading ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <CheckCircle className="h-4 w-4 mr-1" />}
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                    ) : (
+                      <CheckCircle className="h-4 w-4 mr-1" />
+                    )}
                     Resolver
                   </Button>
 
@@ -112,10 +143,16 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                     variant="ghost"
                     size="sm"
                     className="text-vermelho hover:text-vermelho hover:bg-vermelho/10"
-                    onClick={() => handleUpdateStatus(denuncia.reportId, "rejected")}
+                    onClick={() =>
+                      handleUpdateStatus(denuncia.reportId, "rejected")
+                    }
                     disabled={loading} // desabilita o botão enquanto o status está sendo atualizado
                   >
-                    {loading ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <XCircle className="h-4 w-4 mr-1" />}
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                    ) : (
+                      <XCircle className="h-4 w-4 mr-1" />
+                    )}
                     Rejeitar
                   </Button>
                 </TableCell>
