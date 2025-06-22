@@ -70,20 +70,20 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
   };
 
   return (
-    <div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Título</TableHead>
-              <TableHead>Local</TableHead>
-              <TableHead>Data</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>ID</TableHead>
+            <TableHead>Título</TableHead>
+            <TableHead>Local</TableHead>
+            <TableHead>Data</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Ações</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <>
             {denuncias.length === 0 ? (
               <TableRow>
                 <TableCell
@@ -96,8 +96,6 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
             ) : (
               denuncias.map((denuncia) => (
                 <TableRow key={denuncia.reportId}>
-                  {" "}
-                  {/* Alterado para 'reportId' */}
                   <TableCell className="font-medium">
                     {denuncia.reportId}
                   </TableCell>
@@ -158,11 +156,16 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                       size="sm"
                       className="text-vermelho hover:text-vermelho hover:bg-vermelho/10"
                       onClick={() =>
+                        handleUpdateStatus(denuncia.reportId, "rejected")
+                      }
+                      disabled={loading} // desabilita o botão enquanto o status está sendo atualizado
+
                         setModalRejeitar({
                           open: true,
                           reportId: denuncia.reportId,
                         })
                       }
+
                     >
                       {loading ? (
                         <Loader2 className="h-4 w-4 mr-1 animate-spin" />
@@ -209,6 +212,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
     </div>
   );
 };
