@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 
 const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
+  
   const location = useLocation()
 
   // Função para verificar se a rota está ativa

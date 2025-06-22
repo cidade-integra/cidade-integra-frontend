@@ -13,6 +13,7 @@ import {
 
 
 const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
+
   const location = useLocation()
 
   //função para verificar se o link está ativo
@@ -61,6 +62,7 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
         aria-label="Navegar para a página de denúncias"
         aria-current={isActiveRoute("/denuncias") ? "page" : undefined}
         tabIndex={0}
+
       >
         <Bell size={18} aria-hidden="true" />
         <span>Denúncias</span>
@@ -73,6 +75,7 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
         aria-label="Navegar para a página sobre o projeto"
         aria-current={isActiveRoute("/sobre") ? "page" : undefined}
         tabIndex={0}
+
       >
         <User size={18} aria-hidden="true" />
         <span>Sobre</span>
