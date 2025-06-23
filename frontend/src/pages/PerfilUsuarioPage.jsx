@@ -10,7 +10,7 @@ import useUserProfile from "@/hooks/useUserProfile";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { useAuth } from "@/context/AuthContext";
 import { ConfirmDeactivateDialog } from "@/components/perfil/ConfirmDeactivateDialog";
-import { useDeleteAccount } from "@/hooks/useDeleteAccount"; // <--- certifique-se que está implementado
+import { useDeleteAccount } from "@/hooks/useDeleteAccount";
 
 const PerfilUsuarioPage = () => {
   const {
