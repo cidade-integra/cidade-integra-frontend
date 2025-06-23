@@ -1,55 +1,60 @@
 import { useEffect } from "react";
 
 export const useKeyboardNavigation = () => {
-    useEffect(() =>{
+    useEffect(() => {
         let isUsingKeyboard = false;
 
-        //detectar teclado
-        const handleKeyDown =(e) => {
-            if (e.key === "Tab" || e.key === "Enter" || e.keu === "" || e.key.starysWith("Arrow")) {
+        // detectar teclado
+        const handleKeyDown = (e) => {
+            if (
+                e.key === "Tab" ||
+                e.key === "Enter" ||
+                e.key === "" ||
+                (typeof e.key === "string" && e.key.startsWith("Arrow"))
+            ) {
                 isUsingKeyboard = true;
                 document.body.classList.add("keyboard-navigation");
                 document.body.classList.remove("mouse-navigation");
             }
-        }
+        };
 
-        //detectar mouse
+        // detectar mouse
         const handleMouseDown = () => {
             isUsingKeyboard = false;
             document.body.classList.add("mouse-navigation");
             document.body.classList.remove("keyboard-navigation");
-        }
+        };
 
-        //detectar foco via teclado
+        // detectar foco via teclado
         const handleFocus = (e) => {
             if (isUsingKeyboard) {
                 e.target.classList.add("keyboard-focus");
             }
-        }
+        };
 
-        //remover classe ao perder o foco
+        // remover classe ao perder o foco
         const handleBlur = (e) => {
             e.target.classList.remove("keyboard-focus");
-        }
+        };
 
-        //addicionar eventos
+        // adicionar eventos
         document.addEventListener("keydown", handleKeyDown);
         document.addEventListener("mousedown", handleMouseDown);
-        document.addEventListener("focus", handleFocus);
+        document.addEventListener("focus", handleFocus, true);
         document.addEventListener("blur", handleBlur, true);
 
-        //iniciar navegação com mouse
+        // iniciar navegação com mouse
         document.body.classList.add("mouse-navigation");
 
-        //clean up
+        // clean up
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
             document.removeEventListener("mousedown", handleMouseDown);
-            document.removeEventListener("focus", handleFocus);
+            document.removeEventListener("focus", handleFocus, true);
             document.removeEventListener("blur", handleBlur, true);
             document.body.classList.remove("mouse-navigation");
             document.body.classList.remove("keyboard-navigation");
-        }
+        };
     }, []);
 }
 

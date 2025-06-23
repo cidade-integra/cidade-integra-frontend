@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import Logo from "/logotipo-sem-borda.svg";
 import useAuthentication from "@/hooks/UseAuthentication";
@@ -7,7 +7,6 @@ import DesktopMenu from "./DesktopMenu";
 import MobileMenu from "./MobileMenu";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useFetchUser } from "@/hooks/useFetchUser";
 
@@ -36,7 +35,7 @@ const Navbar = () => {
 
       setTimeout(() => {
         navigate("/login");
-      }, 1000)
+      }, 1000);
     } catch (error) {
       console.error("Erro ao sair:", error);
 
@@ -50,12 +49,15 @@ const Navbar = () => {
     }
   };
 
-  //função para lidar com navegação por teclado
-  const handleKeyDown = (event) => {
-    if (event.key === "Escape" && isOpen) {
-      setIsOpen(false);
-    }
-  };
+  // função para lidar com navegação por teclado
+  const handleKeyDown = useCallback(
+    (event) => {
+      if (event.key === "Escape" && isOpen) {
+        setIsOpen(false);
+      }
+    },
+    [isOpen]
+  );
 
   // evita rolagem do fundo com menu mobile aberto
   useEffect(() => {
@@ -65,13 +67,13 @@ const Navbar = () => {
     };
   }, [isOpen]);
 
-  //adiciona evento de teclado para tecla escape
+  // adiciona evento de teclado para tecla escape
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen]);
+  }, [handleKeyDown]);
 
   return (
     <nav className="bg-azul text-white shadow-md">
@@ -90,16 +92,23 @@ const Navbar = () => {
               className="focus:outline-none z-50"
               aria-label="Toggle menu"
               aria-expanded={isOpen}
+              aria-controls="mobile-menu"
+              type="button"
             >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
 
             {/* Menu mobile animado */}
             <div
-              className={`fixed top-20 left-0 w-full bg-azul z-40 transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"
-                }`}
+              id="mobile-menu"
+              className={`fixed top-20 left-0 w-full bg-azul z-40 transition-all duration-300 ease-in-out ${
+                isOpen
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 -translate-y-full pointer-events-none"
+              }`}
             >
-              <div className="flex flex-col px-6 py-4 space-y-4">
+              <div className="flex flex-col px-6 py-4 space-y-2">
+                {/* space-y-2 diminui o espaço entre os itens */}
                 <MobileMenu
                   onClickItem={() => setIsOpen(false)}
                   user={user}
@@ -110,7 +119,8 @@ const Navbar = () => {
             </div>
           </>
         ) : (
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-2">
+            {/* space-x-2 diminui o espaço entre os itens do menu desktop */}
             <DesktopMenu
               user={user}
               onLogout={handleLogout}
