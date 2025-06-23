@@ -241,6 +241,7 @@ export function useReport() {
     setError(null);
 
     try {
+
       const reportRef = doc(db, REPORT_COLLECTION, reportId);
       const snapshot = await getDoc(reportRef);
       const reportData = snapshot.data();
@@ -266,8 +267,7 @@ export function useReport() {
         comment,
       });
     } catch (err) {
-      console.error("Erro ao atualizar o status:", err);
-      setError("Ocorreu um erro ao atualizar o status da denúncia.");
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -286,9 +286,6 @@ export function useReport() {
     getAllReports,
     updateReport,
     deleteReport,
-    markAsResolved,
-    markAsInReview,
-    markAsRejected,
     getInitialReports,
     getMoreReports,
   };

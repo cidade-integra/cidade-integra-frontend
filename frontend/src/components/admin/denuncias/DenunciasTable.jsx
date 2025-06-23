@@ -38,6 +38,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
 
     try {
       // Atualiza o status no banco de dados
+
       if (status === "resolved") {
         await markAsResolved(id);
       } else if (status === "review") {
