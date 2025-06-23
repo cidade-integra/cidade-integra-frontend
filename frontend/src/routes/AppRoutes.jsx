@@ -10,24 +10,25 @@ import AdminPage from "../pages/AdminPage";
 import NotFound from "../pages/NotFound";
 import RecuperarSenhaPage from "@/pages/RecuperarSenhaPage";
 import ProtectedRoute from "./ProtectedRoute";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/toaster"
 import { ToastProvider } from "@radix-ui/react-toast";
 import FAQPage from "@/pages/FAQPage";
-import AccessDeniedPage from "../pages/AccessDeniedPage";
+import AccessDeniedPage from "../pages/AccessDeniedPage"
 import AdminRoute from "./AdminRoute";
 import AdminDashboardPage from "../pages/AdminDashboardPage";
 import UsersAdminPage from "../pages/UsersAdminPage";
 import ScrollToTop from "@/utils/ScrollToTop";
-import Faq from "../pages/Faq";
 
 export default function AppRoutes() {
   return (
-    <BrowserRouter>
+    <BrowserRouter>    
       <ToastProvider>
         <ScrollToTop />
         <Toaster />
         <Routes>
+        
           {/* rotas publicas */}
+  
           <Route path="/" element={<Index />} />
           <Route path="/denuncias" element={<DenunciasPage />} />
           <Route path="/denuncias/:id" element={<DenunciaDetalhes />} />
@@ -35,10 +36,10 @@ export default function AppRoutes() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/sobre" element={<SobrePage />} />
           <Route path="/duvidas" element={<FAQPage />} />
-          <Route path="/faq" element={<Faq />} />
           <Route path="/acesso-negado" element={<AccessDeniedPage />} />
 
           {/* rotas protegidas */}
+  
           <Route
             path="/nova-denuncia"
             element={
@@ -47,6 +48,7 @@ export default function AppRoutes() {
               </ProtectedRoute>
             }
           />
+          
           <Route
             path="/perfil"
             element={
@@ -56,7 +58,8 @@ export default function AppRoutes() {
             }
           />
 
-          {/* rotas protegidas para administradores */}
+        {/* rotas protegidas para administradores */}
+
           <Route
             path="/admin/denuncias"
             element={
@@ -65,6 +68,7 @@ export default function AppRoutes() {
               </AdminRoute>
             }
           />
+
           <Route
             path="/admin"
             element={
@@ -73,15 +77,18 @@ export default function AppRoutes() {
               </AdminRoute>
             }
           />
+
           <Route
-            path="/admin/usuarios"
+           path="/admin/usuarios"
             element={
               <AdminRoute>
                 <UsersAdminPage />
               </AdminRoute>
             }
           />
+  
           <Route path="*" element={<NotFound />} />
+          
         </Routes>
       </ToastProvider>
     </BrowserRouter>
