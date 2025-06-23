@@ -17,6 +17,7 @@ import {
 import { db } from "../firebase/config";
 import { useState } from "react";
 import { useUploadImageReport } from "./useUploadImageReport";
+import { logAudit } from "@/utils/logAudit";
 
 const REPORT_COLLECTION = "reports";
 
@@ -233,6 +234,49 @@ export function useReport() {
       setLoading(false);
     }
   };
+
+  // atualizar o status da denúncia
+  const updateStatus = async (reportId, newStatus, comment = null) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+
+      const reportRef = doc(db, REPORT_COLLECTION, reportId);
+      const snapshot = await getDoc(reportRef);
+      const reportData = snapshot.data();
+
+      const oldStatus = reportData?.status || "unknown";
+
+      const update = {
+        status: newStatus,
+        updatedAt: Timestamp.now(),
+      };
+
+      if (newStatus === "resolved") {
+        update.resolvedAt = Timestamp.now();
+      }
+
+      await updateDoc(reportRef, update);
+
+      await logAudit({
+        reportId,
+        action: "status_change",
+        oldStatus,
+        newStatus,
+        comment,
+      });
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // funções para atualizar o status de cada denúncia
+  const markAsResolved = (id, comment) => updateStatus(id, "resolved", comment);
+  const markAsInReview = (id, comment) => updateStatus(id, "review", comment);
+  const markAsRejected = (id, comment) => updateStatus(id, "rejected", comment);
 
   return {
     loading,
