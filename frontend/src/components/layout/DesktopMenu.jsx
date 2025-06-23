@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+
 import {
   Home,
   Bell,
@@ -9,7 +10,8 @@ import {
   LogOut,
   Plus,
   BookOpen,
-} from "lucide-react"
+  HelpCircle,
+} from "lucide-react";
 
 
 const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
@@ -93,6 +95,15 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
         <span>Dúvidas</span>
       </Link>
 
+      {/* Novo link para Dúvidas Frequentes (FAQ) */}
+      <Link
+        to="/duvidas-frequentes"
+        className="hover:text-verde transition-colors flex items-center gap-1"
+      >
+        <HelpCircle size={18} />
+        <span>FAQ</span>
+      </Link>
+
       {!user && (
         <Link
           to="/login"
@@ -120,7 +131,7 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
             <User size={18} aria-hidden="true" />
             <span>Perfil</span>
           </Link>
-          
+
           {user.role === "admin" && (
             <Link
               to="/admin"
@@ -159,7 +170,7 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
         </Button>
       )}
     </>
-  )
-}
+  );
+};
 
 export default DesktopMenu

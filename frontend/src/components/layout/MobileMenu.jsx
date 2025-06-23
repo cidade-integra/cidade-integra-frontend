@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+
 import {
   Home,
   Bell,
@@ -9,7 +10,8 @@ import {
   LogOut,
   Plus,
   BookOpen,
-} from "lucide-react"
+  HelpCircle, // novo ícone
+} from "lucide-react";
 
 const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
   
@@ -76,7 +78,7 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
       <Link
         to="/duvidas"
         onClick={onClickItem}
-        className={getLinkClasses("/duvidas")}
+        className="hover:text-verde transition-colors py-2 flex items-center gap-2"
         role="menuitem"
         aria-label="Navegar para página de dúvidas frequentes"
         aria-current={isActiveRoute("/duvidas") ? "page" : undefined}
@@ -84,6 +86,16 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
       >
         <BookOpen size={18} aria-hidden="true" />
         <span>Dúvidas</span>
+      </Link>
+
+      {/* Novo link para Dúvidas Frequentes (FAQ) */}
+      <Link
+        to="/duvidas-frequentes"
+        onClick={onClickItem}
+        className="hover:text-verde transition-colors py-2 flex items-center gap-2"
+      >
+        <HelpCircle size={18} />
+        <span>FAQ</span>
       </Link>
 
       {!user && (
@@ -168,7 +180,7 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
         </Button>
       )}
     </>
-  )
-}
+  );
+};
 
 export default MobileMenu
