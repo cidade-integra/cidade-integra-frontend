@@ -3,7 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { students } from "@/data/equipe";
 import { motion } from "framer-motion";
-import { MapPin } from "lucide-react";
+import { Link, HeartHandshake, Zap } from "lucide-react";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 
@@ -94,7 +94,7 @@ const SobrePage = () => {
                   className="bg-azul/40 p-6 rounded-lg backdrop-blur-sm"
                 >
                   <div className="bg-verde/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <MapPin className="h-7 w-7 text-verde" />
+                    <Link className="h-7 w-7 text-verde" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2 text-verde">Conectar</h3>
                   <p className="text-cinza">Criar uma ponte eficiente entre cidadãos e órgãos responsáveis.</p>
@@ -108,7 +108,7 @@ const SobrePage = () => {
                   className="bg-azul/40 p-6 rounded-lg backdrop-blur-sm"
                 >
                   <div className="bg-verde/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <MapPin className="h-7 w-7 text-verde" />
+                    <HeartHandshake className="h-7 w-7 text-verde" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2 text-verde">Facilitar</h3>
                   <p className="text-cinza">Simplificar o processo de denúncia e acompanhamento de problemas urbanos.</p>
@@ -122,7 +122,7 @@ const SobrePage = () => {
                   className="bg-azul/40 p-6 rounded-lg backdrop-blur-sm"
                 >
                   <div className="bg-verde/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <MapPin className="h-7 w-7 text-verde" />
+                    <Zap className="h-7 w-7 text-verde" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2 text-verde">Transformar</h3>
                   <p className="text-cinza">Impactar positivamente a qualidade de vida nas cidades através da tecnologia.</p>
