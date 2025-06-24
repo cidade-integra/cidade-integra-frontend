@@ -11,6 +11,7 @@ import {
   User,
   Bookmark,
   BookmarkCheck,
+  Images,
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -23,7 +24,14 @@ import MapaEstatico from "@/components/denuncias/MapaEstatico";
 import { useAuth } from "@/context/AuthContext";
 import { doc, setDoc, deleteDoc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
-
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { useToast } from "@/hooks/use-toast";
 
 const DenunciaDetalhes = () => {
   const { id } = useParams();
@@ -33,7 +41,7 @@ const DenunciaDetalhes = () => {
   const { currentUser } = useAuth();
   const [isSaved, setIsSaved] = useState(false);
   const [isLoadingSave, setIsLoadingSave] = useState(false);
-  
+  const { toast } = useToast();
 
   useEffect(() => {
     let isMounted = true;
@@ -46,7 +54,6 @@ const DenunciaDetalhes = () => {
     return () => {
       isMounted = false;
     };
-
   }, [id]);
 
   useEffect(() => {
@@ -55,7 +62,7 @@ const DenunciaDetalhes = () => {
     const checkSaved = async () => {
       const docRef = doc(
         db,
-        "usuarios",
+        "users",
         currentUser.uid,
         "denunciasSalvas",
         id
@@ -67,44 +74,40 @@ const DenunciaDetalhes = () => {
     checkSaved();
   }, [currentUser?.uid, id]);
 
-  const handleToggleSave = async () => {
-    if (!currentUser?.uid || !denuncia) return;
+  // Substitua handleToggleSave por toggleSave
+  const toggleSave = async (e) => {
+    e.preventDefault();
+    if (!currentUser || !denuncia) return;
 
-    setIsLoadingSave(true);
-    const docRef = doc(db, "usuarios", currentUser.uid, "denunciasSalvas", id);
+    const ref = doc(
+      db,
+      "users",
+      currentUser.uid,
+      "denunciasSalvas",
+      denuncia.reportId || id
+    );
 
     try {
       if (isSaved) {
-        await deleteDoc(docRef);
+        await deleteDoc(ref);
         setIsSaved(false);
+        // Se desejar, chame onRemoveSaved se existir
+        // if (typeof onRemoveSaved === "function") {
+        //   onRemoveSaved(denuncia.reportId || id);
+        // }
       } else {
-        const {
-          title,
-          description,
-          location,
-          imagemUrl,
-          createdAt,
-          status,
-          userId,
-          isAnonymous,
-        } = denuncia;
-        await setDoc(docRef, {
-          reportId: id,
-          title,
-          description,
-          location,
-          imagemUrl: imagemUrl || null,
-          createdAt,
-          status,
-          userId,
-          isAnonymous,
+        await setDoc(ref, {
+          ...denuncia,
+          savedAt: new Date(),
         });
         setIsSaved(true);
+        toast({
+          title: "Denúncia salva!",
+          description: "Confira suas denúncias salvas no seu perfil.",
+        });
       }
     } catch (error) {
-      console.error("Erro ao salvar denúncia:", error);
-    } finally {
-      setIsLoadingSave(false);
+      console.error("Erro ao atualizar denúncia salva:", error);
     }
   };
 
@@ -151,9 +154,16 @@ const DenunciaDetalhes = () => {
     resolvedAt,
     status,
     imagemUrl,
+    imagemUrls, // array de imagens
     isAnonymous,
     location,
-  } = denuncia;
+  } = denuncia || {};
+
+  // junta imagem única e array para compatibilidade
+  const allImages = [
+    ...(imagemUrls || []),
+    ...(imagemUrl ? [imagemUrl] : []),
+  ].filter(Boolean);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -178,12 +188,39 @@ const DenunciaDetalhes = () => {
         <div className="container mx-auto px-4 py-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              {imagemUrl ? (
-                <img
-                  src={imagemUrl}
-                  alt={title}
-                  className="w-full max-h-96 object-cover rounded-lg"
-                />
+              {/* Imagens com suporte a múltiplas imagens */}
+              {allImages.length > 0 ? (
+                <div className="relative mb-6">
+                  {allImages.length === 1 ? (
+                    <img
+                      src={allImages[0]}
+                      alt={title}
+                      className="w-full max-h-96 object-cover rounded-lg"
+                    />
+                  ) : (
+                    <>
+                      <Carousel className="w-full">
+                        <CarouselContent>
+                          {allImages.map((img, idx) => (
+                            <CarouselItem key={idx}>
+                              <img
+                                src={img}
+                                alt={`${title} - Imagem ${idx + 1}`}
+                                className="w-full max-h-96 object-cover rounded-lg"
+                              />
+                            </CarouselItem>
+                          ))}
+                        </CarouselContent>
+                        <CarouselPrevious className="left-2" />
+                        <CarouselNext className="right-2" />
+                      </Carousel>
+                      <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                        <Images className="h-3 w-3" />
+                        <span>{allImages.length}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
               ) : (
                 <span className="text-gray-500 text-sm">Sem imagem</span>
               )}
@@ -283,9 +320,9 @@ const DenunciaDetalhes = () => {
                   </Button>
                   <Button
                     variant={isSaved ? "default" : "outline"}
-                    className="w-full"
-                    onClick={handleToggleSave}
-                    disabled={isLoadingSave}
+                    className={isSaved ? "hover:bg-verde-escuro bg-verde w-full" : "w-full"}
+                    onClick={toggleSave}
+                    disabled={isLoadingSave}  
                   >
                     {isSaved ? (
                       <>

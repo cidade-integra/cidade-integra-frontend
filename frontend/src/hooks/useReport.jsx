@@ -29,39 +29,36 @@ export function useReport() {
   const createReport = async (report) => {
     setLoading(true)
     setError(null)
-  
+
     try {
       const now = Timestamp.now()
-      let imagemUrlSupabase = null
-  
-      // se houver imagem, faz upload no Supabase
-      if (report.imagemFile && report.userId) {
-        const uploadResult = await useUploadImageReport(
-          report.imagemFile,
-          report.userId
-        )
-  
-        if (!uploadResult.success) {
-          throw new Error(uploadResult.error || "Falha ao fazer upload da imagem.")
+      let imagemUrlsSupabase = []
+
+      // Suporte para múltiplas imagens (até 2)
+      if (report.imagemFiles && Array.isArray(report.imagemFiles) && report.userId) {
+        for (const file of report.imagemFiles.slice(0, 2)) {
+          const uploadResult = await useUploadImageReport(file, report.userId)
+          if (!uploadResult.success) {
+            throw new Error(uploadResult.error || "Falha ao fazer upload da imagem.")
+          }
+          imagemUrlsSupabase.push(uploadResult.url)
         }
-  
-        imagemUrlSupabase = uploadResult.url
       }
-  
+
       // monta o objeto da denúncia
       const reportData = {
         ...report,
-        imagemUrl: imagemUrlSupabase || null,
+        imagemUrls: imagemUrlsSupabase.length > 0 ? imagemUrlsSupabase : null, // array de URLs
         createdAt: now,
         updatedAt: now,
         status: "pending",
         resolvedAt: null,
       }
-  
-      delete reportData.imagemFile // remover o File do objeto antes de salvar no Firestore
-  
+
+      delete reportData.imagemFiles // remover o File do objeto antes de salvar no Firestore
+
       const docRef = await addDoc(reportsRef, reportData)
-  
+
       // atualiza contador de denúncias do usuário, se aplicável
       if (report.userId) {
         const userRef = doc(db, "users", report.userId)
@@ -69,7 +66,7 @@ export function useReport() {
           reportCount: increment(1),
         })
       }
-  
+
       return docRef.id
     } catch (err) {
       console.error("Erro ao criar denúncia:", err)
