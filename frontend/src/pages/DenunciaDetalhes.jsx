@@ -264,10 +264,10 @@ const DenunciaDetalhes = () => {
                       <p className="font-medium">
                         {createdAt
                           ? format(
-                              createdAt.toDate ? createdAt.toDate() : createdAt,
-                              "PPP",
-                              { locale: ptBR }
-                            )
+                            createdAt.toDate ? createdAt.toDate() : createdAt,
+                            "PPP",
+                            { locale: ptBR }
+                          )
                           : "-"}
                       </p>
                     </div>
@@ -318,24 +318,26 @@ const DenunciaDetalhes = () => {
                     <MessageSquare className="h-4 w-4 mr-2" />
                     <span>Adicionar Comentário</span>
                   </Button>
-                  <Button
-                    variant={isSaved ? "default" : "outline"}
-                    className={isSaved ? "hover:bg-verde-escuro bg-verde w-full" : "w-full"}
-                    onClick={toggleSave}
-                    disabled={isLoadingSave}  
-                  >
-                    {isSaved ? (
-                      <>
-                        <BookmarkCheck className="h-4 w-4 mr-2" />
-                        Salva
-                      </>
-                    ) : (
-                      <>
-                        <Bookmark className="h-4 w-4 mr-2" />
-                        Salvar denúncia
-                      </>
-                    )}
-                  </Button>
+                  {currentUser && (
+                    <Button
+                      variant={isSaved ? "default" : "outline"}
+                      className={isSaved ? "hover:bg-verde-escuro bg-verde w-full" : "w-full"}
+                      onClick={toggleSave}
+                      disabled={isLoadingSave}
+                    >
+                      {isSaved ? (
+                        <>
+                          <BookmarkCheck className="h-4 w-4 mr-2" />
+                          Salva
+                        </>
+                      ) : (
+                        <>
+                          <Bookmark className="h-4 w-4 mr-2" />
+                          Salvar denúncia
+                        </>
+                      )}
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

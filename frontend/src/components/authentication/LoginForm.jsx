@@ -109,7 +109,7 @@ const LoginForm = ({ resetTrigger }) => {
             className="pl-10 focus:outline-none focus:ring-2 focus:ring-verde focus:border-transparent"
             required
             aria-required="true"
-            aria-describeby="email-error"
+            aria-describedby="email-error"
             aria-invalid={loginError ? "true" : "false"}
             autoComplete="email"
             tabIndex={1}

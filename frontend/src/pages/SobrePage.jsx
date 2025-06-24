@@ -2,7 +2,6 @@ import StudentCard from "@/components/sobre/StudentCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { students } from "@/data/equipe";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { Link, HeartHandshake, Zap, ArrowUp } from "lucide-react";

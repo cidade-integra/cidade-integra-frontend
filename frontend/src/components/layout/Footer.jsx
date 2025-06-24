@@ -22,7 +22,7 @@ const Footer = () => {
               <li><Link to="/sobre" className="text-cinza hover:text-verde transition-colors">Sobre nós</Link></li>
 
               <li>
-                <Link to="/duvidas" className="hover:text-verde transition-colors flex items-center gap-1">
+                <Link to="/duvidas" className="text-cinza hover:text-verde transition-colors">
                   <span>Dúvidas</span>
                 </Link>
               </li>
