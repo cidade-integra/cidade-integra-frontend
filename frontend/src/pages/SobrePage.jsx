@@ -2,13 +2,31 @@ import StudentCard from "@/components/sobre/StudentCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { students } from "@/data/equipe";
-import { motion } from "framer-motion";
-import { Link, HeartHandshake, Zap } from "lucide-react";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { Link, HeartHandshake, Zap, ArrowUp } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const SobrePage = () => {
 
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -161,6 +179,28 @@ const SobrePage = () => {
         </section>
       </main>
       <Footer />
+      
+      {/* botão de rolar para cima */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8}}
+            className="fixed bottom-6 right-6 z-50"
+          >
+            <Button
+              onClick={scrollToTop}
+              size="icon"
+              className="bg-verde hover:bg-verde-escuro shadow-lg rounded-full h-12 w-12"
+              aria-label="Voltar ao topo"
+            >
+              <ArrowUp className="h-5 w-5" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 };
