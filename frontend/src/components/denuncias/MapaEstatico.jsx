@@ -1,7 +1,7 @@
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 
 const MapaEstatico = ({local}) => {
-    const mapUrl = `https://via.placeholder.com/300x200/e5e7eb/6b7280?text=${encodeURIComponent(local)}`
+    const mapUrl = ``
 
     return (
         <div className={`rounded-lg overflow-hidden border mb-4`}>

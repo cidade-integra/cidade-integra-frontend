@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,10 +10,11 @@ import ImageUpload from "./ImageUpload";
 import { useReport } from "@/hooks/useReport";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { set } from "date-fns";
 
 const DenunciaForm = () => {
   const navigate = useNavigate();
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewImages, setPreviewImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createReport } = useReport();
   const { currentUser: user } = useAuth();
@@ -53,7 +54,7 @@ const DenunciaForm = () => {
         address: values.local,
         ...(values.cep ? { postalCode: values.cep } : {}),
       },
-      ...(previewImage && { imagemFile: previewImage }), // aqui vai a imagem que será tratado no supabase
+      ...(previewImages.length > 0 && { imagemFiles: previewImages }), // plural e array
     };
   
     setIsSubmitting(true);
@@ -67,7 +68,7 @@ const DenunciaForm = () => {
       });
   
       form.reset();
-      setPreviewImage(null);
+      setPreviewImages(null);
       navigate("/denuncias");
     } catch (error) {
       console.error("Erro ao enviar denúncia:", error);
@@ -90,8 +91,8 @@ const DenunciaForm = () => {
             <DenunciaFormFields form={form} />
 
             <ImageUpload
-              previewImage={previewImage}
-              setPreviewImage={setPreviewImage}
+              previewImages={previewImages}
+              setPreviewImages={setPreviewImages}
             />
 
             <Button
