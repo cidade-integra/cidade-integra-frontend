@@ -1,11 +1,11 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { Award, User, PenLine } from "lucide-react";
+import { Award, User, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import BadgesDisplay from "./BadgesDisplay"
+import BadgesDisplay from "./BadgesDisplay";
 
-const PerfilUsuarioCard = ({ usuario,  onEditClick }) => {
+const PerfilUsuarioCard = ({ usuario, onEditClick }) => {
   return (
     <Card className="mb-6">
       <CardContent className="pt-6">
@@ -16,9 +16,7 @@ const PerfilUsuarioCard = ({ usuario,  onEditClick }) => {
               <User className="h-12 w-12 text-muted-foreground" />
             </AvatarFallback>
           </Avatar>
-          <h2 className="text-2xl font-semibold">
-            {usuario.displayName}
-          </h2>
+          <h2 className="text-2x1 font-semibold">{usuario.displayName}</h2>
           <p className="text-muted-foreground mb-2">{usuario.email}</p>
           <p className="text-sm text-center text-muted-foreground mt-2 mb-4">
             {usuario.bio}
@@ -29,11 +27,11 @@ const PerfilUsuarioCard = ({ usuario,  onEditClick }) => {
           </div>
           <Button
             variant="outline"
-            size="sm"
             onClick={onEditClick}
-            className="mt-4 w-full"
+            className="text-white hover:text-white mt-6 w-full bg-gradient-to-r from-verde to-verde/80 hover:from-verde/90 hover:to-verde/70 font-medium shadow-lg hover:shadow-x1 transition-all duration-300 transform hover:scale-[1.02] border-0"
+            size="lg"
           >
-            <PenLine className="mr-2 h-4 w-4" />
+            <Edit className="mr-2 h-4 w-4" />
             Editar Perfil
           </Button>
         </div>

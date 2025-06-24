@@ -6,7 +6,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { motion } from "framer-motion";
-import { db } from "@/firebase/config";
 
 const FAQCategory = ({ id, title, faqItems }) => {
   return (
