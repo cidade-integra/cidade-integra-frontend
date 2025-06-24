@@ -21,28 +21,29 @@ const FAQPage = () => {
       <FAQHeader />
 
       <motion.div
-  className="container mx-auto px-4 py-12 flex-grow flex flex-col md:flex-row gap-8"
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.5 }}
->
-  {/* navegação lateral apenas se tela for larga */}
-  {isWideEnough && (
-    <aside className="w-1/4">
-      <FAQNavigation
-        activeSection={activeSection}
-        categories={faqCategories}
-      />
-    </aside>
-  )}
+        className={`container mx-auto px-4 py-12 flex-grow flex gap-8 ${
+          isWideEnough ? "md:flex-row" : "justify-center"
+        }`}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* navegação lateral apenas se tela for larga */}
+        {isWideEnough && (
+          <aside className="w-1/4">
+            <FAQNavigation
+              activeSection={activeSection}
+              categories={faqCategories}
+            />
+          </aside>
+        )}
 
-  {/* conteúdo principal ocupa o espaço todo se não houver navegação */}
-  <main className={`w-full ${isWideEnough ? "md:w-3/4" : ""}`}>
-    <FAQSection />
-    <ContactSection />
-  </main>
-</motion.div>
-
+        {/* conteúdo principal ocupa o espaço todo se não houver navegação */}
+        <main className={`w-full ${isWideEnough ? "md:w-3/4" : "max-w-3xl"}`}>
+          <FAQSection isWideEnough={isWideEnough}/>
+          <ContactSection />
+        </main>
+      </motion.div>
 
       <Footer />
     </div>
