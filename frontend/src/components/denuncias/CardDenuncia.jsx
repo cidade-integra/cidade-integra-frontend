@@ -14,6 +14,13 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { doc, setDoc, deleteDoc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const DenunciaCard = ({ denuncia, onRemoveSaved }) => {
   const { currentUser } = useAuth();
@@ -22,7 +29,13 @@ const DenunciaCard = ({ denuncia, onRemoveSaved }) => {
   const [isSaved, setIsSaved] = useState(false);
   const [checking, setChecking] = useState(true);
 
-  const mainImage = denuncia.imagemUrl || null;
+  // Suporte a múltiplas imagens
+  const images =
+    Array.isArray(denuncia.imagemUrls) && denuncia.imagemUrls.length > 0
+      ? denuncia.imagemUrls
+      : denuncia.imagemUrl
+      ? [denuncia.imagemUrl]
+      : [];
 
   useEffect(() => {
     const checkIfSaved = async () => {
@@ -131,9 +144,25 @@ const DenunciaCard = ({ denuncia, onRemoveSaved }) => {
       <Link to={`/denuncias/${denuncia.reportId}`}>
         <div className="relative">
           <div className="h-48 overflow-hidden bg-gray-200 flex items-center justify-center">
-            {mainImage ? (
+            {images.length > 1 ? (
+              <Carousel className="w-full h-full">
+                <CarouselContent>
+                  {images.map((imgUrl, idx) => (
+                    <CarouselItem key={idx}>
+                      <img
+                        src={imgUrl}
+                        alt={denuncia.title}
+                        className="w-full h-48 object-cover"
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            ) : images.length === 1 ? (
               <img
-                src={mainImage}
+                src={images[0]}
                 alt={denuncia.title}
                 className="w-full h-full object-cover"
               />

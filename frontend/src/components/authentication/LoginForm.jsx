@@ -36,10 +36,10 @@ const LoginForm = ({ resetTrigger }) => {
     e.preventDefault();
     setLoginError(null);
     setIsEmailLoading(true);
-  
+
     const email = e.target.email.value.trim();
     const password = e.target.password.value.trim();
-  
+
     // Verificar se os campos estão vazios
     if (!email || !password) {
       setLoginError("Por favor, preencha todos os campos.");
@@ -51,14 +51,14 @@ const LoginForm = ({ resetTrigger }) => {
       setIsEmailLoading(false);
       return;
     }
-  
+
     rememberMe
       ? localStorage.setItem("rememberedEmail", email)
       : localStorage.removeItem("rememberedEmail");
-  
+
     try {
       const result = await loginWithEmail(email, password);
-  
+
       if (result.success) {
         toast({
           title: "✅ Login realizado com sucesso!",
@@ -85,21 +85,34 @@ const LoginForm = ({ resetTrigger }) => {
       setIsEmailLoading(false);
     }
   };
-  
+
 
   return (
-    <form onSubmit={handleLogin} className="space-y-4">
+    <form onSubmit={handleLogin}
+      className="space-y-4"
+      role="form"
+      aria-label="Formulário de login"
+      noValidate
+    >
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <div className="relative">
-          <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+          <Mail
+            className="absolute left-3 top-3 h-4 w-4 text-gray-400"
+            aria-hidden="true"
+          />
           <Input
             id="email"
             name="email"
             type="email"
             placeholder="lyoto@email.com"
-            className="pl-10"
+            className="pl-10 focus:outline-none focus:ring-2 focus:ring-verde focus:border-transparent"
             required
+            aria-required="true"
+            aria-describedby="email-error"
+            aria-invalid={loginError ? "true" : "false"}
+            autoComplete="email"
+            tabIndex={1}
           />
         </div>
       </div>
@@ -107,14 +120,21 @@ const LoginForm = ({ resetTrigger }) => {
       <div className="space-y-2">
         <Label htmlFor="password">Senha</Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400"
+            aria-hidden="true"
+          />
           <Input
             id="password"
             name="password"
             type="password"
             placeholder="••••••••"
-            className="pl-10"
+            className="pl-10 focus:outline-none focus:ring-2 focus:ring-verde focus:border-transparent"
             required
+            aria-required="true"
+            aria-describedby="password-error"
+            aria-invalid={loginError ? "true" : "false"}
+            autoComplete="current-password"
+            tabIndex={2}
           />
         </div>
 
@@ -124,14 +144,20 @@ const LoginForm = ({ resetTrigger }) => {
               id="remember"
               checked={rememberMe}
               onCheckedChange={(checked) => setRememberMe(!!checked)}
+              className="focus:outline-none focus:ring-2 focus:ring-verde focus:ring-offset-2"
+              aria-describedby="remember-description"
+              tabIndex={3}
             />
-            <Label htmlFor="remember" className="text-sm">
+            <Label htmlFor="remember" className="text-sm"
+            id="remember-description">
               Lembrar de mim
             </Label>
           </div>
           <Link
             to="/recuperar-senha"
-            className="text-sm text-verde hover:underline"
+            className="text-sm text-verde hover:underline focus:outline-none focus:ring-2 focus:ring-verde focus:ring-offset-2 rounded-sm"
+            aria-label="Ir para página de recuperação de senha"
+            tabIndex={4}
           >
             Esqueceu a senha?
           </Link>
@@ -140,8 +166,10 @@ const LoginForm = ({ resetTrigger }) => {
 
       <Button
         type="submit"
-        className="w-full bg-verde hover:bg-verde-escuro"
+        className="w-full bg-verde hover:bg-verde-escuro focus:outline-none focus:ring-2 focus:ring-verde focus:ring-offset-2"
         disabled={isEmailLoading}
+        aria-describedby="login-error"
+        tabIndex={5}
       >
         {isEmailLoading ? "Entrando..." : "Entrar"}
       </Button>
@@ -149,10 +177,18 @@ const LoginForm = ({ resetTrigger }) => {
       <GoogleLoginButton setGoogleError={setGoogleError} />
 
       {(loginError || googleError) && (
-        <p className="text-sm text-red-500 mt-2 text-center">
+        <div
+          id="login-error"
+          role="alert"
+          aria-live="polite"
+          className="text-sm text-red-500 mt-2 text-center p-2 bg-red-50 border border-red-200 rounded-md">
           {loginError || googleError}
-        </p>
+        </div>
       )}
+
+      <div className="sr-only" aria-live="polite">
+        {isEmailLoading && "Processando login, aguarde..."}
+      </div>
     </form>
   );
 };

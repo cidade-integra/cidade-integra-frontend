@@ -21,14 +21,14 @@ const EstatisticasCard = ({ totalDenuncias, porcentagemResolvidas }) => {
                     <TooltipTrigger asChild>
                       <Info className="h-4 w-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors" aria-label="Clique para saber como funciona os critérios de pontuação"/>
                     </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-xs">
+                    <TooltipContent side="top" className="max-w-xs bg-azul text-white">
                       <div className="space-y-2 text-sm">
-                        <p className="font-medium">Como funciona a pontuação:</p>
+                        <p className="font-medium">Como funciona a pontuação?</p>
                         <ul className="space-y-1 text-xs">
-                          <li>• +10 pontos por denúncia criada</li>
-                          <li>• +20 pontos por denúncia resolvida</li>
+                          <li>+10 pontos por denúncia criada</li>
+                          <li>+20 pontos por denúncia resolvida</li>
                         </ul>
-                        <p className="text-xs text-muted-foreground mt-2">
+                        <p className="text-xs text-muted-foreground mt-2 text-white">
                           Acumule pontos para subir de nível e ganhar distintivos especiais!
                         </p>
                       </div>

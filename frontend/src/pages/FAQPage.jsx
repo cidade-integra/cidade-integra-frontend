@@ -8,10 +8,12 @@ import ContactSection from "@/components/faq/ContactSection";
 import { motion } from "framer-motion";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { faqCategories } from "@/data/faqData";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const FAQPage = () => {
   const sectionIds = faqCategories.map((category) => category.id);
   const activeSection = useScrollSpy(sectionIds, 150);
+  const isWideEnough = useMediaQuery("(min-width: 1316px)");
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
@@ -19,26 +21,28 @@ const FAQPage = () => {
       <FAQHeader />
 
       <motion.div
-        className="container mx-auto px-4 py-12 flex-grow"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-[260px_1fr] gap-8">
-          {/* navegação lateral */}
-          <aside className="hidden md:block">
-            <FAQNavigation
-              activeSection={activeSection}
-              categories={faqCategories}
-            />
-          </aside>
-          {/* conteúdo principal */}
-          <main className="w-full">
-            <FAQSection />
-            <ContactSection />
-          </main>
-        </div>
-      </motion.div>
+  className="container mx-auto px-4 py-12 flex-grow flex flex-col md:flex-row gap-8"
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.5 }}
+>
+  {/* navegação lateral apenas se tela for larga */}
+  {isWideEnough && (
+    <aside className="w-1/4">
+      <FAQNavigation
+        activeSection={activeSection}
+        categories={faqCategories}
+      />
+    </aside>
+  )}
+
+  {/* conteúdo principal ocupa o espaço todo se não houver navegação */}
+  <main className={`w-full ${isWideEnough ? "md:w-3/4" : ""}`}>
+    <FAQSection />
+    <ContactSection />
+  </main>
+</motion.div>
+
 
       <Footer />
     </div>
