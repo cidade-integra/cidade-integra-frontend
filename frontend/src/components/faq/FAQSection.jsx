@@ -11,7 +11,7 @@ import { faqCategories } from "@/data/faqData";
 import { motion } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
 
-const FAQSection = () => {
+const FAQSection = ({ isWideEnough }) => {
   const [activeId, setActiveId] = useState(null)
 
   useEffect(() => {
@@ -42,7 +42,11 @@ const FAQSection = () => {
       className="flex flex-col md:flex-row gap-8"
     >
       {/* FAQ Content */}
-      <div className="md:w-3/4 space-y-10 mb-12">
+      <div
+  className={`space-y-10 mb-12 ${
+    isWideEnough ? "md:w-3/4" : "w-full max-w-3xl mx-auto"
+  }`}
+>
         <Card className="border-none shadow-lg">
           <CardHeader className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 rounded-t-lg border-b border-gray-100 dark:border-gray-700">
             <CardTitle className="text-xl md:text-2xl text-azul font-bold">
