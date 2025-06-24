@@ -12,27 +12,27 @@ import { motion } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
 
 const FAQSection = () => {
-  const [activeId, setActiveId] = useState(null);
+  const [activeId, setActiveId] = useState(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
+            setActiveId(entry.target.id)
           }
-        });
+        })
       },
       { threshold: 0.5 }
-    );
+    )
 
     faqCategories.forEach((category) => {
-      const el = document.getElementById(category.id);
-      if (el) observer.observe(el);
-    });
+      const el = document.getElementById(category.id)
+      if (el) observer.observe(el)
+    })
 
-    return () => observer.disconnect();
-  }, []);
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <motion.div
@@ -45,7 +45,7 @@ const FAQSection = () => {
       <div className="md:w-3/4 space-y-10 mb-12">
         <Card className="border-none shadow-lg">
           <CardHeader className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 rounded-t-lg border-b border-gray-100 dark:border-gray-700">
-            <CardTitle className="text-xl md:text-2xl text-azul">
+            <CardTitle className="text-xl md:text-2xl text-azul font-bold">
               Dúvidas sobre o Cidade Integra
             </CardTitle>
             <CardDescription className="text-base">
@@ -78,7 +78,7 @@ const FAQSection = () => {
         </Card>
       </div>
     </motion.div>
-  );
-};
+  )
+}
 
-export default FAQSection;
+export default FAQSection
