@@ -20,10 +20,11 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useReportStatus } from "@/hooks/useReportStatus";
 
 const DenunciasTable = ({ denuncias, setDenuncias }) => {
   const { markAsResolved, markAsRejected, markAsInReview, loading } =
-    useReport();
+    useReportStatus();
   const { toast } = useToast();
 
   // Estado para controlar o modal de rejeição
