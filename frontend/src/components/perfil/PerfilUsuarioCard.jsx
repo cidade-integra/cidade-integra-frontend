@@ -4,8 +4,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Award, User, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BadgesDisplay from "./BadgesDisplay";
+import useModalStore from "@/hooks/useModalStore";
 
-const PerfilUsuarioCard = ({ usuario, onEditClick }) => {
+const PerfilUsuarioCard = ({ usuario }) => {
+
+  const openModal = useModalStore((s) =>s.openModal)
+
+  const handleEditClick = () => {
+    openModal("editar-perfil", {
+      usuario: usuario,
+      isGoogleUser: usuario.providerId === "google.com",
+    });
+  };
+
   return (
     <Card className="mb-6">
       <CardContent className="pt-6">
@@ -27,7 +38,7 @@ const PerfilUsuarioCard = ({ usuario, onEditClick }) => {
           </div>
           <Button
             variant="outline"
-            onClick={onEditClick}
+            onClick={handleEditClick}
             className="text-white hover:text-white mt-6 w-full bg-gradient-to-r from-verde to-verde/80 hover:from-verde/90 hover:to-verde/70 font-medium shadow-lg hover:shadow-x1 transition-all duration-300 transform hover:scale-[1.02] border-0"
             size="lg"
           >

@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import useAuthentication from "@/hooks/UseAuthentication";
 import GoogleLoginButton from "./GoogleLoginButton";
+import useModalStore from '@/hooks/useModalStore';
 
 const LoginForm = ({ resetTrigger }) => {
   const [rememberMe, setRememberMe] = useState(false);
@@ -17,6 +18,8 @@ const LoginForm = ({ resetTrigger }) => {
   const { loginWithEmail } = useAuthentication();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { openModal, closeModal } = useModalStore();
+
 
   useEffect(() => {
     setLoginError(null);
@@ -64,7 +67,8 @@ const LoginForm = ({ resetTrigger }) => {
           title: "✅ Login realizado com sucesso!",
           description: "Bem-vindo de volta!",
         });
-        navigate("/");
+        closeModal("success");
+        //navigate("/")
       } else {
         const message = result.error || "Não foi possível fazer login.";
         setLoginError(message);
@@ -153,14 +157,14 @@ const LoginForm = ({ resetTrigger }) => {
               Lembrar de mim
             </Label>
           </div>
-          <Link
-            to="/recuperar-senha"
+          <button
+            onClick={() => openModal("recuperar-senha")}
             className="text-sm text-verde hover:underline focus:outline-none focus:ring-2 focus:ring-verde focus:ring-offset-2 rounded-sm"
             aria-label="Ir para página de recuperação de senha"
             tabIndex={4}
           >
             Esqueceu a senha?
-          </Link>
+          </button>
         </div>
       </div>
 

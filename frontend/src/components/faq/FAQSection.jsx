@@ -7,12 +7,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import FAQCategory from "./FAQCategory";
-import { faqCategories } from "@/data/faqData";
+import { getFaqCategories } from "@/data/faqData";
+import useModalStore from "@/hooks/useModalStore";
 import { motion } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
 
 const FAQSection = ({ isWideEnough }) => {
   const [activeId, setActiveId] = useState(null)
+
+  const { openModal } = useModalStore();
+  const faqCategories = getFaqCategories(openModal);
 
   useEffect(() => {
     const observer = new IntersectionObserver(

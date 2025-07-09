@@ -1,25 +1,56 @@
-import { Navigate } from "react-router-dom";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase/config";
+import { useEffect, useState } from "react";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useNavigate } from "react-router-dom";
+import useModalStore from "@/hooks/useModalStore";
+import { useToast } from "@/hooks/use-toast";
 
-export default function ProtectedRoute({ children }) {
+function AdminRoute({ children }) {
+  const navigate = useNavigate();
+  const { user, loading } = useCurrentUser();
+  const { openModal } = useModalStore();
+  const { toast } = useToast();
+  const [checked, setChecked] = useState(false);
 
-  const [user, loading] = useAuthState(auth);
+  useEffect(() => {
+    const checkAccess = async () => {
+      if (!loading) {
+        if (user && user.role !== "admin") {
+          toast({
+            title: "Acesso Negado",
+            description: "Você não possui permissão para acessar esta área.",
+            variant: "destructive",
+          });
+          navigate("/acesso-negado", { replace: true });
+          return;
+        }
 
-  if (loading) {
-    
-    // exibe um carregamento enquanto verifica o estado de autenticação
+        if (!user) {
+          toast({
+            title: "⚠️ Acesso Restrito",
+            description: "Faça login para acessar esta página de administrador.",
+          });
+
+          const result = await openModal("login", {}, null, { overlayColor: "bg-azul" });
+
+          if (result === "success") {
+            setChecked(true);
+          } else {
+            navigate("/", { replace: true });
+          }
+        } else {
+          setChecked(true);
+        }
+      }
+    };
+
+    checkAccess();
+  }, [loading, user]);
+
+  if (loading || !checked) {
     return <div>Carregando...</div>;
-
   }
 
-  if (!user) {
-
-    // redireciona para a página de login se o usuário não estiver autenticado
-    return <Navigate to="/login" />;
-
-  }
-
-  // renderiza o componente filho se o usuário estiver autenticado
-  return children;
+  return <>{children}</>;
 }
+
+export default AdminRoute; // ✅ GARANTA ESTA LINHA

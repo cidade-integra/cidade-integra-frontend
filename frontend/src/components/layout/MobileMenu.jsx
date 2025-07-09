@@ -11,7 +11,7 @@ import {
   BookOpen,
 } from "lucide-react"
 
-const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
+const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut, onLogin }) => {
   
   const location = useLocation()
 
@@ -87,9 +87,11 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
       </Link>
 
       {!user && (
-        <Link
-          to="/login"
-          onClick={onClickItem}
+        <button
+          onClick={() => {
+            onClickItem?.();
+            onLogin();
+          }}
           className={getLinkClasses("/login")}
           role="menuitem"
           aria-label="Navegar para página de login"
@@ -98,7 +100,8 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
         >
           <LogIn size={18} aria-hidden="true" />
           <span>Entrar</span>
-        </Link>
+      </button>
+
       )}
 
       {user && (

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export const faqCategories = [
+export const getFaqCategories = (openModal) => [
   {
     id: "platform",
     label: "Sobre a Plataforma",
@@ -84,12 +84,13 @@ export const faqCategories = [
         answer: (
           <>
             Para criar uma conta, clique em{" "}
-            <Link
-              to="/login"
+            <span
+              role="button"
+              onClick={() => openModal("login")}
               className="text-verde font-bold hover:text-verde-escuro hover:underline"
             >
               Entrar
-            </Link>{" "}
+            </span>{" "}
             no menu superior e depois selecione a opção "Cadastrar". Você
             precisará fornecer seu nome, email e criar uma senha. Também é
             possível se cadastrar utilizando sua conta do Google ou Facebook
@@ -121,19 +122,21 @@ export const faqCategories = [
         answer: (
           <>
             Se você esqueceu sua senha, clique em{" "}
-            <Link
-              to="/login"
+            <span
+              role="button"
+              onClick={() => openModal("login")}
               className="text-verde font-bold hover:text-verde-escuro hover:underline"
             >
               Entrar
-            </Link>{" "}
+            </span>{" "}
             e depois na opção{" "}
-            <Link
-              to="/login"
+            <span
+              role="button"
+              onClick={() => openModal("recuperar-senha")}
               className="text-verde font-bold hover:text-verde-escuro hover:underline"
             >
               Esqueceu a senha?
-            </Link>
+            </span>
             . Você será redirecionado para a página de recuperação, onde deverá
             informar o email cadastrado. Enviaremos um link para você criar uma
             nova senha de acesso.

@@ -8,7 +8,11 @@ export function useFetchUser(userId) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      setUser(null);
+      setLoading(false);
+      return;
+    };
 
     setLoading(true);
     setError(null);

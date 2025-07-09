@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import useAuthentication from "@/hooks/UseAuthentication";
 import { z } from "zod";
 import TermsModal from "@/components/ui/terms-modal"
+import useModalStore from "@/hooks/useModalStore";
 
 
 const RegisterForm = ({ resetTrigger }) => {
@@ -23,6 +24,7 @@ const RegisterForm = ({ resetTrigger }) => {
   const { registerWithEmail } = useAuthentication();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const {closeModal} = useModalStore()
 
   const [showTermsModal, setShowTermsModal] = useState(false)
   const [showPrivacyModal, setShowPrivacyModal] = useState(false)
@@ -80,6 +82,7 @@ const RegisterForm = ({ resetTrigger }) => {
           title: "🎉 Cadastro realizado com sucesso!",
           description: "Bem-vindo! Você já pode começar a usar a plataforma.",
         });
+        closeModal()
         navigate("/");
       } else {
         const message = result.error || "Ocorreu um erro ao criar sua conta.";

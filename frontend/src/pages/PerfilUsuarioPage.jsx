@@ -1,16 +1,17 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Dialog } from "@/components/ui/dialog";
 import PerfilHeader from "@/components/perfil/PerfilHeader";
 import PerfilUsuarioCard from "@/components/perfil/PerfilUsuarioCard";
 import EstatisticasCard from "@/components/perfil/EstatisticasCard";
 import MinhasDenuncias from "@/components/perfil/MinhasDenuncias";
-import EditarPerfilForm from "@/components/perfil/EditarPerfilForm";
 import useUserProfile from "@/hooks/useUserProfile";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { useAuth } from "@/context/AuthContext";
 import { ConfirmDeactivateDialog } from "@/components/perfil/ConfirmDeactivateDialog";
 import { useDeleteAccount } from "@/hooks/useDeleteAccount";
+
+import GenericModal from "@/components/modals/GenericModal";
+import EditProfileFormModal from "@/components/perfil/EditProfileFormModal";
 
 const PerfilUsuarioPage = () => {
   const {
@@ -74,18 +75,27 @@ const PerfilUsuarioPage = () => {
       </main>
       <Footer />
 
-      {/* diálogo de edição de perfil */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <EditarPerfilForm
+      <GenericModal
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        title={{
+          text: "Editar Perfil",
+          className: "text-2xl font-bold text-azul",
+        }}
+        description={{
+          text: "Atualize suas informações de conta e senha.",
+          className: "text-gray-500 mt-2 text-sm",
+        }}
+      >
+        <EditProfileFormModal
           usuario={usuarioData}
-          isOpen={isEditDialogOpen}
+          isGoogleUser={isGoogleUser}
           isPasswordAlertOpen={isPasswordAlertOpen}
-          onOpenChange={setIsEditDialogOpen}
           onPasswordAlertOpenChange={setIsPasswordAlertOpen}
           onSubmit={handleEditProfile}
-          isGoogleUser={isGoogleUser}
+          closeModal={() => setIsEditDialogOpen(false)}
         />
-      </Dialog>
+      </GenericModal>
     </div>
   );
 };

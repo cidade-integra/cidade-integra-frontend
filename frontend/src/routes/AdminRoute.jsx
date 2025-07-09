@@ -1,20 +1,16 @@
-import { useEffect } from "react"
-import { useCurrentUser } from "@/hooks/useCurrentUser"
-import { useNavigate } from "react-router-dom"
+import { Navigate } from "react-router-dom";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function AdminRoute({ children }) {
-  const navigate = useNavigate()
-  const { user, loading } = useCurrentUser()
+  const { user, loading } = useCurrentUser();
 
-  useEffect(() => {
-    if (!loading) {
-      if (!user || user.role !== "admin") {
-        navigate("/acesso-negado") // redireciona para a home ou página de acesso negado
-      }
-    }
-  }, [user, loading, navigate])
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
 
-  if (loading || !user) return null
+  if (!user || user.role !== "admin") {
+    return <Navigate to="/acesso-negado" replace />;
+  }
 
-  return <>{children}</>
+  return <>{children}</>;
 }

@@ -48,32 +48,28 @@ export default function useUserProfile() {
       : 0;
   };
 
-  const handleEditProfile = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const nome = formData.get("nome");
-    const email = formData.get("email");
-    const bio = formData.get("bio");
-    const senhaAtual = formData.get("senha-atual");
-    const novaSenha = formData.get("nova-senha");
-    const confirmarNovaSenha = formData.get("confirmar-senha");
+  const handleEditProfile = async (data) => {
+
+    const { nome,
+      email,
+      bio,
+      "senha-atual": senhaAtual,
+      "nova-senha": novaSenha,
+      "confirmar-senha": confirmarNovaSenha
+    } = data;
 
     const currentUser = auth.currentUser;
 
     if (!currentUser) return;
 
     try {
-      // atualiza senha (se não for login Google)
       if (!isGoogleUser && senhaAtual && novaSenha && confirmarNovaSenha) {
         if (novaSenha !== confirmarNovaSenha) {
           setIsPasswordAlertOpen(true);
           return;
         }
 
-        const credential = EmailAuthProvider.credential(
-          currentUser.email,
-          senhaAtual
-        );
+        const credential = EmailAuthProvider.credential(currentUser.email, senhaAtual);
         await reauthenticateWithCredential(currentUser, credential);
         await updatePassword(currentUser, novaSenha);
         toast({
@@ -82,17 +78,14 @@ export default function useUserProfile() {
         });
       }
 
-      // atualiza e-mail (se mudou)
       if (email !== currentUser.email) {
         await updateEmail(currentUser, email);
       }
 
-      // atualiza displayName no Auth
       if (nome !== currentUser.displayName) {
         await updateProfile(currentUser, { displayName: nome });
       }
 
-      // atualiza dados no Firestore
       const userRef = doc(db, "users", currentUser.uid);
       await updateDoc(userRef, {
         displayName: nome,
@@ -115,7 +108,7 @@ export default function useUserProfile() {
         variant: "destructive",
       });
     }
-  };
+  }
 
   return {
     usuarioData,

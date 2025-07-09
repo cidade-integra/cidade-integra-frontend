@@ -12,7 +12,7 @@ import {
 } from "lucide-react"
 
 
-const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
+const DesktopMenu = ({ user, onLogout, isLoggingOut, onLogin }) => {
 
   const location = useLocation()
 
@@ -94,8 +94,8 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
       </Link>
 
       {!user && (
-        <Link
-          to="/login"
+        <button
+          onClick={onLogin}
           className={getLinkClasses("/login")}
           role="menuitem"
           aria-label="Navegar para a página de login"
@@ -104,7 +104,7 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
         >
           <LogIn size={18} aria-hidden="true" />
           <span>Entrar</span>
-        </Link>
+        </button>
       )}
 
       {user && (

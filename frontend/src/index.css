@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import '.acessibility.css ';
+@import './GlobalCSS/accessibility.css';
 
 @layer base {
   :root {

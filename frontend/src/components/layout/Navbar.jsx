@@ -9,6 +9,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useFetchUser } from "@/hooks/useFetchUser";
+import useModalStore from "@/hooks/useModalStore";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,10 +18,11 @@ const Navbar = () => {
 
   const { currentUser } = useAuth();
   const { user } = useFetchUser(currentUser?.uid);
+  const navigate = useNavigate();
 
   const isMobile = useIsMobile();
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const openModal = useModalStore((s) => s.openModal)
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -34,7 +36,7 @@ const Navbar = () => {
       });
 
       setTimeout(() => {
-        navigate("/login");
+        navigate(0);
       }, 1000);
     } catch (error) {
       console.error("Erro ao sair:", error);
@@ -59,6 +61,8 @@ const Navbar = () => {
     [isOpen]
   );
 
+  const handleOpenLogin = () => openModal("login")
+
   // evita rolagem do fundo com menu mobile aberto
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
@@ -74,6 +78,7 @@ const Navbar = () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleKeyDown]);
+
 
   return (
     <nav className="bg-azul text-white shadow-md">
@@ -114,6 +119,7 @@ const Navbar = () => {
                   user={user}
                   onLogout={handleLogout}
                   isLoggingOut={isLoggingOut}
+                  onLogin={handleOpenLogin}
                 />
               </div>
             </div>
@@ -125,6 +131,7 @@ const Navbar = () => {
               user={user}
               onLogout={handleLogout}
               isLoggingOut={isLoggingOut}
+              onLogin={handleOpenLogin}
             />
           </div>
         )}

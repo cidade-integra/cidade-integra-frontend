@@ -7,10 +7,16 @@ import FAQNavigation from "@/components/faq/FAQNavigation";
 import ContactSection from "@/components/faq/ContactSection";
 import { motion } from "framer-motion";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
-import { faqCategories } from "@/data/faqData";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
+
+import { getFaqCategories } from "@/data/faqData";
+import useModalStore from "@/hooks/useModalStore";
+
 const FAQPage = () => {
+  const {openModal} = useModalStore()
+  const faqCategories = getFaqCategories(openModal)
+
   const sectionIds = faqCategories.map((category) => category.id);
   const activeSection = useScrollSpy(sectionIds, 150);
   const isWideEnough = useMediaQuery("(min-width: 1316px)");
