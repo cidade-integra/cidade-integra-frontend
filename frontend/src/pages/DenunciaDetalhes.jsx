@@ -249,10 +249,11 @@ const DenunciaDetalhes = () => {
                         Localização
                       </p>
                       <p className="font-medium">{location?.address || "-"}</p>
-                    </div>
-                    <div className="mt-4">
+                      <div className="mt-4">
                       <MapaEstatico local={location.address} />
                     </div>
+                    </div>
+                    
                   </div>
                   <Separator />
                   <div className="flex items-start gap-2">
