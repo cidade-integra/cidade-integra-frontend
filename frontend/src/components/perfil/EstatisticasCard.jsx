@@ -58,7 +58,7 @@ const EstatisticasCard = ({ totalDenuncias, porcentagemResolvidas }) => {
               <span className="font-medium">{porcentagemResolvidas}%</span>
             </div>
             <div className="w-full bg-muted rounded-full h-2.5">
-              <div className="bg-blue-500 h-2.5 rounded-full" style={{ width: `${porcentagemResolvidas}%` }}></div>
+              <div className="bg-verde h-2.5 rounded-full" style={{ width: `${porcentagemResolvidas}%` }}></div>
             </div>
           </div>
         </div>
