@@ -18,39 +18,59 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useState } from "react";
+import { Mail, Lock, X, Eye, EyeOff, Check } from "lucide-react";
 
 const EditarPerfilForm = ({
   usuario,
-  isOpen,
   isPasswordAlertOpen,
   isGoogleUser,
   onOpenChange,
   onPasswordAlertOpenChange,
   onSubmit,
 }) => {
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const calculatePasswordStrength = (password) => {
+    const checks = {
+      length: password.length >= 6,
+    }
+    return { checks };
+  };
+
+  const passwordStrength = calculatePasswordStrength(password);
+
   return (
     <>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Editar Perfil</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="nome">Nome</Label>
             <Input id="nome" name="nome" defaultValue={usuario.displayName} />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" name="email" type="email" defaultValue={usuario.email} />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="bio">Sobre mim</Label>
             <Textarea id="bio" name="bio" defaultValue={usuario.bio} />
           </div>
-          
+
           <div className="border-t pt-4 mt-6">
             <h3 className="text-lg font-medium mb-4">Alterar Senha</h3>
 
@@ -58,18 +78,105 @@ const EditarPerfilForm = ({
               <>
                 <div className="space-y-2">
                   <Label htmlFor="senha-atual">Senha Atual</Label>
-                  <Input id="senha-atual" name="senha-atual" type="password" />
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="senha-atual"
+                      name="senha-atual"
+                      type={showCurrentPassword ? "text" : "password"}
+                      className="pl-10"
+                      required
+                      placeholder="••••••••"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    >
+                      {showCurrentPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
-                
+
                 <div className="space-y-2 mt-2">
                   <Label htmlFor="nova-senha">Nova Senha</Label>
-                  <Input id="nova-senha" name="nova-senha" type="password" />
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="register-password"
+                      name="register-password"
+                      type={showPassword ? "text" : "password"}
+                      className="pl-10"
+                      required
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                      onClick={() => setShowPassword(!showPassword)}>
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+
+                  {/*Feedback visual para validação da senha*/}
+                  {password && (
+                    <div className="mt-2 space-y-2">
+                      <div className="space-y-1 text-sm">
+                        <div className={`flex items-center gap-2 ${passwordStrength.checks.length ? "text-green-600" : "text-red-600"}`}>
+                          {passwordStrength.checks.length ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+                          <span>A senha deve ter 6 caracteres ou mais</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                
+
                 <div className="space-y-2 mt-2">
                   <Label htmlFor="confirmar-senha">Confirmar Nova Senha</Label>
-                  <Input id="confirmar-senha" name="confirmar-senha" type="password" />
-                </div>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="confirm-password"
+                      name="confirm-password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      className="pl-10"
+                      required
+                      placeholder="••••••••"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+
+                  {confirmPassword && (
+                    <div className="mt-2">
+                      {password === confirmPassword ? (
+                        <div className="text-green-600 text-sm flex items-center gap-2 text-green-600 text-sm">
+                          <Check className="h-4 w-4" />
+                          <span>As senhas coincidem</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-red-600 text-sm">
+                          <X className="h-4 w-4" />
+                          <span>As senhas não são iguais</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div >
               </>
             ) : (
               <Alert variant="info">
@@ -80,8 +187,10 @@ const EditarPerfilForm = ({
               </Alert>
             )}
 
+
+
           </div>
-          
+
           <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
               Cancelar
