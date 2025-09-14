@@ -32,6 +32,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useToast } from "@/hooks/use-toast";
+import StatusFlow from "@/components/denuncias/StatusFlow";
 
 const DenunciaDetalhes = () => {
   const { id } = useParams();
@@ -311,6 +312,8 @@ const DenunciaDetalhes = () => {
                   )}
                 </div>
               </div>
+
+              <StatusFlow status={status} />
 
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-xl font-semibold mb-4">Ações</h2>
