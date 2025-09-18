@@ -6,15 +6,16 @@ import UsersAdminHeader from "@/components/admin/usuarios/UsersAdminHeader";
 import UsersSearch from "@/components/admin/usuarios/UsersSearch";
 import UsersStats from "@/components/admin/usuarios/UsersStats";
 import UsersTable from "@/components/admin/usuarios/UsersTable";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import UsersCharts from "@/components/admin/usuarios/UsersCharts";
 
-import {useAllUsers} from "@/hooks/useAllUsers";
+import { useAllUsers } from "@/hooks/useAllUsers";
 
 const UsersAdminPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("todos");
   const { toast } = useToast();
   const { users, loading, error } = useAllUsers();
-
 
   const atualizarStatus = async (id, novoStatus) => {
     try {
@@ -67,25 +68,33 @@ const UsersAdminPage = () => {
         <UsersAdminHeader />
 
         <div className="container mx-auto px-4 py-8">
+
+          <UsersStats users={users} />
+
           {loading ? (
             <p>Carregando usuários...</p>
           ) : error ? (
             <p className="text-red-500">Erro ao carregar usuários.</p>
           ) : (
-            <>
-              <UsersStats users={users} />
+            <Tabs defaultValue="usuarios" className="w-full">
+              <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
+                <TabsTrigger value="usuarios">Usuários</TabsTrigger>
+                <TabsTrigger value="estatisticas">Estatísticas</TabsTrigger>
+              </TabsList>
+              <TabsContent value="usuarios">
+                <UsersSearch
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  filter={filter}
+                  setFilter={setFilter}
+                />
 
-              <UsersSearch
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                filter={filter}
-                setFilter={setFilter}
-              />
-
-              <UsersTable
-                users={filteredUsers}
-              />
-            </>
+                <UsersTable users={filteredUsers} />
+              </TabsContent>
+              <TabsContent value="estatisticas">
+                <UsersCharts users={users} />
+              </TabsContent>
+            </Tabs>
           )}
         </div>
       </main>

@@ -40,9 +40,11 @@ export default function useUserProfile() {
   }, [user]);
 
   const calcularPorcentagemResolvidas = () => {
+    
     const resolvidas = minhasDenuncias.filter(
-      (d) => d.status === "resolvido"
+      (d) => d.status === "resolved"
     ).length;
+
     return minhasDenuncias.length > 0
       ? Math.round((resolvidas / minhasDenuncias.length) * 100)
       : 0;
