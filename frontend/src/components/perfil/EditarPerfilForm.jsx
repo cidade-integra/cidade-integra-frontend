@@ -63,13 +63,18 @@ const EditarPerfilForm = ({
 
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" defaultValue={usuario.email} />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              defaultValue={usuario.email}
+            />
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="bio">Sobre mim</Label>
             <Textarea id="bio" name="bio" defaultValue={usuario.bio} />
-          </div>
+          </div> */}
 
           <div className="border-t pt-4 mt-6">
             <h3 className="text-lg font-medium mb-4">Alterar Senha</h3>
@@ -141,6 +146,7 @@ const EditarPerfilForm = ({
 
                 <div className="space-y-2 mt-2">
                   <Label htmlFor="confirmar-senha">Confirmar Nova Senha</Label>
+
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
@@ -177,37 +183,48 @@ const EditarPerfilForm = ({
                     </div>
                   )}
                 </div >
+
               </>
             ) : (
               <Alert variant="info">
                 <AlertTitle>Conta Google</AlertTitle>
                 <AlertDescription>
-                  Você está logado com uma conta do Google. Para alterar sua senha, acesse as configurações da sua conta Google.
+                  Você está logado com uma conta do Google. Para alterar sua
+                  senha, acesse as configurações da sua conta Google.
                 </AlertDescription>
               </Alert>
             )}
 
-
-
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">
-            <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => onOpenChange(false)}
+            >
               Cancelar
             </Button>
-            <Button type="submit" className="bg-verde hover:bg-verde-escuro text-white">
+            <Button
+              type="submit"
+              className="bg-verde hover:bg-verde-escuro text-white"
+            >
               Salvar alterações
             </Button>
           </div>
         </form>
       </DialogContent>
 
-      <AlertDialog open={isPasswordAlertOpen} onOpenChange={onPasswordAlertOpenChange}>
+      <AlertDialog
+        open={isPasswordAlertOpen}
+        onOpenChange={onPasswordAlertOpenChange}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>❌ Erro na alteração de senha</AlertDialogTitle>
             <AlertDialogDescription>
-              As senhas não correspondem. Por favor, verifique se a nova senha e a confirmação são idênticas.
+              As senhas não correspondem. Por favor, verifique se a nova senha e
+              a confirmação são idênticas.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
