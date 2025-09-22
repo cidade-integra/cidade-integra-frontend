@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Eye, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import {
   Table,
@@ -71,12 +72,12 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
+            {/*<TableHead>ID</TableHead> */}
             <TableHead>Título</TableHead>
             <TableHead>Local</TableHead>
             <TableHead>Data</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="text-right">Ações</TableHead>
+            <TableHead>Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -92,10 +93,19 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
           ) : (
             denuncias.map((denuncia) => (
               <TableRow key={denuncia.reportId}>
-                <TableCell className="font-medium">
-                  {denuncia.reportId}
+                {/* <TableCell className="font-medium">
+                  {denuncia.reportId} 
+                </TableCell> */}
+                <TableCell>
+                  <Link
+                    to={`/denuncias/${denuncia.reportId}`}
+                    className="text-black font-medium hover:underline hover:text-green-600"
+                  >
+                    {denuncia.title}
+                  </Link>
                 </TableCell>
-                <TableCell>{denuncia.title}</TableCell>
+
+
                 <TableCell>{denuncia.location?.address}</TableCell>
                 <TableCell>
                   {new Date(
@@ -105,63 +115,40 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                 <TableCell>
                   <DenunciaStatusBadge status={denuncia.status} />
                 </TableCell>
-                <TableCell className="text-right flex flex-col space-y-2">
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link to={`/denuncias/${denuncia.reportId}`}>
-                      <Eye className="h-4 w-4 mr-1" />
-                      Ver
-                    </Link>
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-blue-500 hover:bg-blue-500/10 hover:text-blue-500"
-                    onClick={() =>
-                      handleUpdateStatus(denuncia.reportId, "review")
-                    }
+                <TableCell className="text-right">
+                  <Select
+                    onValueChange={async (value) => {
+                      if (value === "view") {
+                        window.location.href = `/denuncias/${denuncia.reportId}`;
+                      } else if (value === "review" || value === "resolved") {
+                        await handleUpdateStatus(denuncia.reportId, value);
+                      } else if (value === "rejected") {
+                        setModalRejeitar({
+                          open: true,
+                          reportId: denuncia.reportId,
+                        });
+                      }
+                    }}
                     disabled={loading}
                   >
-                    {loading ? (
-                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                    ) : (
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                    )}
-                    Em Análise
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-verde hover:text-verde hover:bg-verde/10"
-                    onClick={() =>
-                      handleUpdateStatus(denuncia.reportId, "resolved")
-                    }
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                    ) : (
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                    )}
-                    Resolver
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-vermelho hover:text-vermelho hover:bg-vermelho/10"
-                    onClick={() =>
-                      setModalRejeitar({
-                        open: true,
-                        reportId: denuncia.reportId,
-                      })
-                    }
-                    disabled={loading}
-                  >
-                    <XCircle className="h-4 w-4 mr-1" />
-                    Rejeitar
-                  </Button>
+                    <SelectTrigger className="w-36">
+                      <SelectValue placeholder="Alterar" />
+                    </SelectTrigger>
+                    <SelectContent> 
+                      {/*<SelectItem value="view" className="text-blue-600 hover:text-blue-800">
+                        <Eye className="h-4 w-4 mr-1 inline" /> Ver
+                      </SelectItem> */}
+                      <SelectItem value="review" className="text-yellow-600 hover:text-yellow-800">
+                        <CheckCircle className="h-4 w-4 mr-1 inline" /> Em Análise
+                      </SelectItem>
+                      <SelectItem value="resolved" className="text-green-600 hover:text-green-800">
+                        <CheckCircle className="h-4 w-4 mr-1 inline" /> Resolver
+                      </SelectItem>
+                      <SelectItem value="rejected" className="text-red-600 hover:text-red-800">
+                        <XCircle className="h-4 w-4 mr-1 inline" /> Rejeitar
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </TableCell>
               </TableRow>
             ))
