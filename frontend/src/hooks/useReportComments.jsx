@@ -9,11 +9,13 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/config"; 
 import {useCurrentUser} from "@/hooks/useCurrentUser";
+import { useToast } from "@/hooks/use-toast";
 
 export function useReportComments(reportId) {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { toast } = useToast();
 
   const { user } = useCurrentUser();
 
@@ -50,25 +52,33 @@ export function useReportComments(reportId) {
 
   const addComment = useCallback(
     async (message) => {
-      if (!reportId) throw new Error("reportId não informado.");
-      if (!user) throw new Error("Usuário não autenticado.");
-      if (!message?.trim()) throw new Error("Comentário vazio.");
 
-      console.log(user)
+      try {
+        if (!reportId) throw new Error("reportId não informado.");
+        if (!user) throw new Error("Usuário não autenticado.");
+        if (!message?.trim()) throw new Error("Comentário vazio.");
 
-      const commentData = {
-        author: user.displayName || "Usuário",
-        authorId: user.uid,
-        message: message.trim(),
-        createdAt: serverTimestamp(),
-        avatarColor: user.role === "admin" ? "verde-escuro" : "gray",
-        role: user.role || "user",
-      };
+        const commentData = {
+          author: user.displayName || "Usuário",
+          authorId: user.uid,
+          message: message.trim(),
+          createdAt: serverTimestamp(),
+          avatarColor: user.role === "admin" ? "verde-escuro" : "gray",
+          role: user.role || "user",
+        };
 
-      const commentsRef = collection(db, REPORT_COLLECTION, reportId, COMMENTS_SUBCOLLECTION);
-      await addDoc(commentsRef, commentData);
+        const commentsRef = collection(db, REPORT_COLLECTION, reportId, COMMENTS_SUBCOLLECTION);
+        await addDoc(commentsRef, commentData);
+      } catch (err) {
+        toast({
+          title: "❌ Erro ao adicionar comentário",
+          description: err.message,
+          status: "error",
+        });
+        throw err;
+      }
     },
-    [reportId, user]
+    [reportId, user, toast]
   );
 
   return {
