@@ -20,6 +20,8 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useState } from "react";
 import { Mail, Lock, X, Eye, EyeOff, Check } from "lucide-react";
+import { getAuth, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
+import { useToast } from "@/hooks/use-toast";
 
 const EditarPerfilForm = ({
   usuario,
@@ -39,6 +41,10 @@ const EditarPerfilForm = ({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const [formError, setFormError] = useState("");
+
+  const { toast } = useToast();
+
   const calculatePasswordStrength = (password) => {
     const checks = {
       length: password.length >= 6,
@@ -48,6 +54,71 @@ const EditarPerfilForm = ({
 
   const passwordStrength = calculatePasswordStrength(password);
 
+  const firebaseErrorMessages = {
+    "auth/invalid-credential": "Senha atual incorreta.",
+    "auth/weak-password": "A nova senha é muito fraca. Escolha uma senha mais forte.",
+    "auth/too-many-requests": "Muitas tentativas. Tente novamente mais tarde.",
+    "auth/requires-recent-login": "Por segurança, faça login novamente para alterar sua senha.",
+    "auth/user-not-found": "Usuário não encontrado.",
+    "auth/network-request-failed": "Falha de conexão. Verifique sua internet.",
+    // Adicione outros erros relevantes conforme necessário
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormError("");
+
+    // Limpa os campos de senha ao iniciar a operação
+    setCurrentPassword("");
+    setPassword("");
+    setConfirmPassword("");
+
+    if (isGoogleUser) {
+      onSubmit(e);
+      toast({
+        title: "✅ Perfil atualizado!",
+        description: "Suas informações foram salvas com sucesso.",
+        status: "success",
+      });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setFormError("As senhas não coincidem.");
+      onPasswordAlertOpenChange(true);
+      return;
+    }
+
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      const credential = EmailAuthProvider.credential(
+        usuario.email,
+        currentPassword
+      );
+      await reauthenticateWithCredential(user, credential);
+      await updatePassword(user, password);
+      onSubmit(e);
+      onOpenChange(false);
+      toast({
+        title: "Perfil atualizado!",
+        description: "Suas informações foram salvas com sucesso.",
+        status: "success",
+      });
+    } catch (err) {
+      const msg =
+        firebaseErrorMessages[err.code] ||
+        err.message ||
+        "Erro ao atualizar senha. Tente novamente.";
+      setFormError(msg);
+    } finally {
+      // Limpa os campos de senha ao finalizar a operação
+      setCurrentPassword("");
+      setPassword("");
+      setConfirmPassword("");
+    }
+  };
+
   return (
     <>
       <DialogContent className="sm:max-w-md">
@@ -55,7 +126,7 @@ const EditarPerfilForm = ({
           <DialogTitle>Editar Perfil</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="nome">Nome</Label>
             <Input id="nome" name="nome" defaultValue={usuario.displayName} />
@@ -70,11 +141,6 @@ const EditarPerfilForm = ({
               defaultValue={usuario.email}
             />
           </div>
-
-          {/* <div className="space-y-2">
-            <Label htmlFor="bio">Sobre mim</Label>
-            <Textarea id="bio" name="bio" defaultValue={usuario.bio} />
-          </div> */}
 
           <div className="border-t pt-4 mt-6">
             <h3 className="text-lg font-medium mb-4">Alterar Senha</h3>
@@ -170,7 +236,7 @@ const EditarPerfilForm = ({
                   {confirmPassword && (
                     <div className="mt-2">
                       {password === confirmPassword ? (
-                        <div className="text-green-600 text-sm flex items-center gap-2 text-green-600 text-sm">
+                        <div className="text-green-600 text-sm flex items-center gap-2">
                           <Check className="h-4 w-4" />
                           <span>As senhas coincidem</span>
                         </div>
@@ -196,6 +262,10 @@ const EditarPerfilForm = ({
             )}
 
           </div>
+
+          {formError && (
+            <div className="text-red-600 text-sm">{formError}</div>
+          )}
 
           <div className="flex justify-end space-x-2 pt-4">
             <Button
