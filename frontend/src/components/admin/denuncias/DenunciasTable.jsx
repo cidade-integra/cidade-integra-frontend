@@ -154,11 +154,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                       <SelectValue placeholder="Alterar" />
                     </SelectTrigger>
                     <SelectContent>
-                    
-                      {/*<SelectItem value="view" className="text-blue-600 hover:text-blue-800">
-                        <Eye className="h-4 w-4 mr-1 inline" /> Ver
-                      </SelectItem> */}
-                      <SelectItem value="review" className="text-yellow-600 hover:text-yellow-800">
+                      <SelectItem value="review" className="text-blue-600 hover:text-blue-800">
                         <CheckCircle className="h-4 w-4 mr-1 inline" /> Em Análise
                       </SelectItem>
                       <SelectItem value="resolved" className="text-green-600 hover:text-green-800">
@@ -200,7 +196,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
               Cancelar
             </Button>
             <Button
-              className="bg-blue-500"
+              className="bg-blue-500 hover:bg-blue-600"
               onClick={async () => {
                 await handleUpdateStatus(modalEmAnalise.reportId, "review");
                 setModalEmAnalise({ open: false, reportId: null });
@@ -235,7 +231,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
               Cancelar
             </Button>
             <Button
-              className="bg-verde"
+              className="bg-verde hover:bg-verde-escuro"
               onClick={async () => {
                 await handleUpdateStatus(modalResolver.reportId, "resolved");
                 setModalResolver({ open: false, reportId: null });
@@ -270,7 +266,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
               Cancelar
             </Button>
             <Button
-              className="bg-vermelho"
+              className="bg-vermelho hover:bg-red-900"
               onClick={async () => {
                 await handleUpdateStatus(modalRejeitar.reportId, "rejected");
                 setModalRejeitar({ open: false, reportId: null });
