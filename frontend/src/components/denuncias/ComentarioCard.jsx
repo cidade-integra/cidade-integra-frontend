@@ -37,7 +37,15 @@ function containsBlockedWords(text) {
 }
 
 export default function ComentarioCard({ reportId, scrollToCommentInput }) {
-  const { comments, loading, error, addComment } = useReportComments(reportId);
+  const PAGE_SIZE = 5;
+  const {
+    comments,
+    loading,
+    error,
+    addComment,
+    loadMore,
+    hasMore,
+  } = useReportComments(reportId, PAGE_SIZE);
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -217,6 +225,17 @@ export default function ComentarioCard({ reportId, scrollToCommentInput }) {
             </div>
           );
         })}
+        {hasMore && !loading && (
+          <div className="flex justify-center mt-4">
+            <Button
+              size="sm"
+              className="bg-verde hover:bg-verde/90"
+              onClick={loadMore}
+            >
+              Carregar mais comentários
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
