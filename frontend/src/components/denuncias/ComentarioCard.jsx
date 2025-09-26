@@ -3,19 +3,81 @@ import { MessageSquare, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReportComments } from "@/hooks/useReportComments";
 
+const BLOCKED_WORDS = [
+  "merda",
+  "bosta",
+  "porra",
+  "caralho",
+  "puta",
+  "putaria",
+  "babaca",
+  "fdp",
+  "filho da puta",
+  "desgraçado",
+  "arrombado",
+  "vagabundo",
+  "vagabunda",
+  "otário",
+  "otária",
+  "piranha",
+  "cuzão",
+  "cu",
+  "viado",
+  "boiola",
+  "corno",
+  "cacete",
+  "pau no cu",
+  "vai se fuder",
+  "vai tomar no cu"
+];
+
+function containsBlockedWords(text) {
+  const lower = text.toLowerCase();
+  return BLOCKED_WORDS.some((word) => lower.includes(word));
+}
+
 export default function ComentarioCard({ reportId, scrollToCommentInput }) {
   const { comments, loading, error, addComment } = useReportComments(reportId);
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const textareaRef = useRef(null);
 
+  const MAX_LENGTH = 500;
+  const MIN_LENGTH = 5;
+
+  const handleChange = (e) => {
+    if (e.target.value.length <= MAX_LENGTH) {
+      setNewComment(e.target.value);
+      setErrorMsg(""); // Limpa erro ao digitar
+    }
+  };
+
   const handleSubmit = async () => {
-    if (!newComment.trim()) return;
+    const trimmed = newComment.trim();
+
+    // Campo obrigatório e mínimo de caracteres
+    if (!trimmed) {
+      setErrorMsg("O comentário não pode estar em branco.");
+      return;
+    }
+    if (trimmed.length < MIN_LENGTH) {
+      setErrorMsg(`O comentário deve ter pelo menos ${MIN_LENGTH} caracteres.`);
+      return;
+    }
+    // Palavras ofensivas
+    if (containsBlockedWords(trimmed)) {
+      setErrorMsg("Seu comentário contém palavras não permitidas.");
+      return;
+    }
+
     try {
       setSubmitting(true);
-      await addComment(newComment);
+      await addComment(trimmed);
       setNewComment("");
+      setErrorMsg("");
     } catch (err) {
+      setErrorMsg("Erro ao publicar comentário.");
       console.error("Erro ao publicar comentário:", err);
     } finally {
       setSubmitting(false);
@@ -54,23 +116,31 @@ export default function ComentarioCard({ reportId, scrollToCommentInput }) {
               placeholder="Adicione seu comentário sobre esta denúncia..."
               className="w-full min-h-[80px] p-3 rounded-md border border-input bg-background text-sm ring-offset-verde placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all duration-200"
               value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
+              onChange={handleChange}
               style={{ resize: "vertical" }}
               ref={textareaRef}
+              maxLength={MAX_LENGTH}
             />
             <div className="flex justify-between items-center mt-3">
               <span className="text-xs text-muted-foreground">
-                Seja respeitoso e construtivo em seus comentários
+                {`Seja respeitoso e construtivo em seus comentários (${newComment.length}/${MAX_LENGTH})`}
               </span>
               <Button
                 size="sm"
                 className="bg-verde hover:bg-verde/90"
                 onClick={handleSubmit}
-                disabled={submitting}
+                disabled={
+                  submitting ||
+                  !newComment.trim() ||
+                  newComment.trim().length < MIN_LENGTH
+                }
               >
                 {submitting ? "Publicando..." : "Publicar Comentário"}
               </Button>
             </div>
+            {errorMsg && (
+              <div className="text-xs text-red-500 mt-2">{errorMsg}</div>
+            )}
           </div>
         </div>
       </div>
@@ -120,7 +190,7 @@ export default function ComentarioCard({ reportId, scrollToCommentInput }) {
                             : "bg-blue-100 text-blue-700"
                         }`}
                       >
-                        {isAdmin ? "Oficial" : "Cidadão"}
+                        {isAdmin ? "Administrador" : "Cidadão"}
                       </span>
                     </div>
                     <span className="text-xs text-muted-foreground">
