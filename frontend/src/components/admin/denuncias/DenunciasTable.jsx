@@ -185,7 +185,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
         }
       >
         <DialogContent>
-          <DialogTitle>Análisar denúncia - #{modalEmAnalise.reportId}</DialogTitle>
+          <DialogTitle>Analisar denúncia - #{modalEmAnalise.reportId}</DialogTitle>
           <DialogDescription>
             Tem certeza que deseja marcar a denúncia '<i>{
               denuncias.find(d => d.reportId === modalEmAnalise.reportId)?.title
