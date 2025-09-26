@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import DenunciaStatusBadge from "@/components/denuncias/DenunciaStatusBadge";
@@ -43,6 +44,7 @@ const DenunciaDetalhes = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [isLoadingSave, setIsLoadingSave] = useState(false);
   const { toast } = useToast();
+  const commentInputRef = useRef();
 
   useEffect(() => {
     let isMounted = true;
@@ -231,7 +233,7 @@ const DenunciaDetalhes = () => {
                 <p className="text-muted-foreground">{description}</p>
               </div>
 
-              <ComentarioCard />
+              <ComentarioCard reportId={id} scrollToCommentInput={commentInputRef} />
             </div>
 
             <div className="lg:col-span-1">
@@ -251,10 +253,10 @@ const DenunciaDetalhes = () => {
                       </p>
                       <p className="font-medium">{location?.address || "-"}</p>
                       <div className="mt-4">
-                      <MapaEstatico local={location.address} />
+                        <MapaEstatico local={location.address} />
+                      </div>
                     </div>
-                    </div>
-                    
+
                   </div>
                   <Separator />
                   <div className="flex items-start gap-2">
@@ -318,7 +320,10 @@ const DenunciaDetalhes = () => {
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-xl font-semibold mb-4">Ações</h2>
                 <div className="space-y-4">
-                  <Button className="w-full bg-verde hover:bg-verde-escuro">
+                  <Button
+                    className="w-full bg-verde hover:bg-verde-escuro"
+                    onClick={() => commentInputRef.current && commentInputRef.current()}
+                  >
                     <MessageSquare className="h-4 w-4 mr-2" />
                     <span>Adicionar Comentário</span>
                   </Button>
