@@ -9,6 +9,7 @@ import {
   LogOut,
   Plus,
   BookOpen,
+  Building2,
 } from "lucide-react"
 
 
@@ -77,7 +78,7 @@ const DesktopMenu = ({ user, onLogout, isLoggingOut }) => {
         tabIndex={0}
 
       >
-        <User size={18} aria-hidden="true" />
+        <Building2 size={18} aria-hidden="true" />
         <span>Sobre</span>
       </Link>
 

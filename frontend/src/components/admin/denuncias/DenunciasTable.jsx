@@ -154,6 +154,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                       <SelectValue placeholder="Alterar" />
                     </SelectTrigger>
                     <SelectContent>
+                    
                       {/*<SelectItem value="view" className="text-blue-600 hover:text-blue-800">
                         <Eye className="h-4 w-4 mr-1 inline" /> Ver
                       </SelectItem> */}
