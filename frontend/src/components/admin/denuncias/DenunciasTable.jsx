@@ -34,6 +34,17 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
     reportId: null,
   });
 
+  // Estado para controlar o modal de Em Analise
+  const [modalEmAnalise, setModalEmAnalise] = useState({
+    open: false,
+    reportId: null,
+  });
+  // Estado para controlar o modal de resolver
+  const [modalResolver, setModalResolver] = useState({
+    open: false,
+    reportId: null,
+  });
+
   // função para lidar com a atualização do status
   const handleUpdateStatus = async (id, status) => {
     if (loading) return; // impede múltiplos cliques enquanto o status está sendo atualizado
@@ -120,8 +131,16 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                     onValueChange={async (value) => {
                       if (value === "view") {
                         window.location.href = `/denuncias/${denuncia.reportId}`;
-                      } else if (value === "review" || value === "resolved") {
-                        await handleUpdateStatus(denuncia.reportId, value);
+                      } else if (value === "review") {
+                        setModalEmAnalise({
+                          open: true,
+                          reportId: denuncia.reportId,
+                        });
+                      } else if (value === "resolved") {
+                        setModalResolver({
+                          open: true,
+                          reportId: denuncia.reportId,
+                        });
                       } else if (value === "rejected") {
                         setModalRejeitar({
                           open: true,
@@ -134,7 +153,8 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                     <SelectTrigger className="w-36">
                       <SelectValue placeholder="Alterar" />
                     </SelectTrigger>
-                    <SelectContent> 
+                    <SelectContent>
+                    
                       {/*<SelectItem value="view" className="text-blue-600 hover:text-blue-800">
                         <Eye className="h-4 w-4 mr-1 inline" /> Ver
                       </SelectItem> */}
@@ -156,7 +176,79 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
         </TableBody>
       </Table>
 
-      {/* Modal de confirmação */}
+
+
+      {/* Modal de confirmação - Em Analise*/}
+      <Dialog
+        open={modalEmAnalise.open}
+        onOpenChange={(open) =>
+          setModalEmAnalise((v) => ({ ...v, open }))
+        }
+      >
+        <DialogContent>
+          <DialogTitle>Analisar denúncia - #{modalEmAnalise.reportId}</DialogTitle>
+          <DialogDescription>
+            Tem certeza que deseja marcar a denúncia '<i>{
+              denuncias.find(d => d.reportId === modalEmAnalise.reportId)?.title
+            }</i>' como <b>Em Análise</b>?
+          </DialogDescription>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setModalEmAnalise({ open: false, reportId: null })}
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="bg-blue-500"
+              onClick={async () => {
+                await handleUpdateStatus(modalEmAnalise.reportId, "review");
+                setModalEmAnalise({ open: false, reportId: null });
+              }}
+              disabled={loading}
+            >
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de confirmação - Resolver*/}
+      <Dialog
+        open={modalResolver.open}
+        onOpenChange={(open) =>
+          setModalResolver((v) => ({ ...v, open }))
+        }
+      >
+        <DialogContent>
+          <DialogTitle>Resolver denúncia - #{modalResolver.reportId}</DialogTitle>
+          <DialogDescription>
+            Tem certeza que deseja marcar a denúncia '<i>{
+              denuncias.find(d => d.reportId === modalResolver.reportId)?.title
+            }</i>' como <b>Resolvida</b>?
+          </DialogDescription>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setModalResolver({ open: false, reportId: null })}
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="bg-verde"
+              onClick={async () => {
+                await handleUpdateStatus(modalResolver.reportId, "resolved");
+                setModalResolver({ open: false, reportId: null });
+              }}
+              disabled={loading}
+            >
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de confirmação - Rejeitar*/}
       <Dialog
         open={modalRejeitar.open}
         onOpenChange={(open) =>
@@ -164,9 +256,11 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
         }
       >
         <DialogContent>
-          <DialogTitle>Confirmar rejeição</DialogTitle>
+          <DialogTitle>Rejeitar denúncia - #{modalRejeitar.reportId}</DialogTitle>
           <DialogDescription>
-            Tem certeza que deseja marcar esta denúncia como <b>rejeitada</b>?
+            Tem certeza que deseja <b>rejeitar</b> a denúncia: <i>{
+              denuncias.find(d => d.reportId === modalRejeitar.reportId)?.title
+            }</i>?
           </DialogDescription>
           <DialogFooter>
             <Button
@@ -176,7 +270,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
               Cancelar
             </Button>
             <Button
-              variant="destructive"
+              className="bg-vermelho"
               onClick={async () => {
                 await handleUpdateStatus(modalRejeitar.reportId, "rejected");
                 setModalRejeitar({ open: false, reportId: null });
@@ -188,6 +282,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
     </div>
   );
 };
