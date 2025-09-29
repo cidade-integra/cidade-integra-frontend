@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Mail, Lock, X, Eye, EyeOff, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,9 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import useAuthentication from "@/hooks/UseAuthentication";
 import { z } from "zod";
 import TermsModal from "@/components/ui/terms-modal";
-import { useRef } from "react"; // já que você importa outros hooks
-
-
+import { useRef } from "react";
 
 const RegisterForm = ({ resetTrigger }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -38,17 +36,18 @@ const RegisterForm = ({ resetTrigger }) => {
 
   // Renderizar reCAPTCHA
   useEffect(() => {
+    let rendered = false;
     const interval = setInterval(() => {
-      if (window.grecaptcha && recaptchaRef.current) {
+      if (window.grecaptcha && recaptchaRef.current && !rendered) {
         window.grecaptcha.render(recaptchaRef.current, {
           sitekey: "6Lej6tgrAAAAAAQevtYjEoZdNDvCEv4K8_V1Ujel",
         });
+        rendered = true;
         clearInterval(interval);
       }
     }, 500);
+    return () => clearInterval(interval);
   }, []);
-
-
 
   const calculatePasswordStrength = (password) => {
     const checks = {
@@ -62,7 +61,12 @@ const RegisterForm = ({ resetTrigger }) => {
   const registerSchema = z.object({
     name: z
       .string()
-      .min(1, "Por favor, preencha seu nome completo."),
+      .min(3, "O nome deve ter pelo menos 3 caracteres.")
+      .max(60, "O nome deve ter no máximo 60 caracteres.")
+      .regex(/^[A-Za-zÀ-ÿ\s]+$/, "O nome deve conter apenas letras e espaços.")
+      .refine((val) => val.trim().length > 0, {
+        message: "Por favor, preencha seu nome completo.",
+      }),
     email: z
       .string()
       .email("Por favor, insira um e-mail válido."),
@@ -140,10 +144,6 @@ const RegisterForm = ({ resetTrigger }) => {
     } finally {
       setIsLoading(false);
     }
-
-
-
-
   };
 
   return (
@@ -151,7 +151,7 @@ const RegisterForm = ({ resetTrigger }) => {
       <form onSubmit={handleRegister} className="space-y-4 mb-6">
         <div className="space-y-2">
           <Label htmlFor="name">Nome completo</Label>
-          <Input id="name" name="name" placeholder="Seu nome completo" required />
+          <Input id="name" name="name" placeholder="Seu nome completo" required maxLength={60} />
         </div>
 
         <div className="space-y-2">
@@ -230,7 +230,7 @@ const RegisterForm = ({ resetTrigger }) => {
           {confirmPassword && (
             <div className="mt-2">
               {password === confirmPassword ? (
-                <div className="text-green-600 text-sm flex items-center gap-2 text-green-600 text-sm">
+                <div className="flex items-center gap-2 text-green-600 text-sm">
                   <Check className="h-4 w-4" />
                   <span>As senhas coincidem</span>
                 </div>
@@ -267,26 +267,23 @@ const RegisterForm = ({ resetTrigger }) => {
           </Label>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
-  <div ref={recaptchaRef}></div>
-</div>
+        <div ref={recaptchaRef}></div>
 
+        <Button
+          type="submit"
+          className="w-full bg-verde hover:bg-verde-escuro"
+          disabled={isLoading}
+          onClick={() => window.grecaptcha.execute()}
+        >
+          {isLoading ? "Cadastrando..." : "Cadastrar"}
+        </Button>
 
-
-      <Button
-        type="submit"
-        className="w-full bg-verde hover:bg-verde-escuro"
-        disabled={isLoading}
-      >
-        {isLoading ? "Cadastrando..." : "Cadastrar"}
-      </Button>
-
-      {
-        registerError && (
-          <p className="text-sm text-red-500 mt-2 text-center">{registerError}</p>
-        )
-      }
-    </form >
+        {
+          registerError && (
+            <p className="text-sm text-red-500 mt-2 text-center">{registerError}</p>
+          )
+        }
+      </form >
 
       <TermsModal
         open={showTermsModal}

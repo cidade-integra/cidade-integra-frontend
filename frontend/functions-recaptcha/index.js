@@ -2,9 +2,12 @@ import { onRequest } from "firebase-functions/v2/https";
 import logger from "firebase-functions/logger";
 import fetch from "node-fetch";
 import * as functions from "firebase-functions";
+import { se } from "date-fns/locale";
 
 // Pega a chave secreta do Firebase Functions config
 const secretKey = functions.config().recaptcha.secret_key;
+
+console.log(secretKey);
 
 export const verifyRecaptcha = onRequest(async (req, res) => {
   const { token } = req.body;
