@@ -8,7 +8,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import useAuthentication from "@/hooks/UseAuthentication";
 import { z } from "zod";
-import TermsModal from "@/components/ui/terms-modal"
+import TermsModal from "@/components/ui/terms-modal";
+import { useRef } from "react"; // já que você importa outros hooks
+
 
 
 const RegisterForm = ({ resetTrigger }) => {
@@ -24,12 +26,29 @@ const RegisterForm = ({ resetTrigger }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const [showTermsModal, setShowTermsModal] = useState(false)
-  const [showPrivacyModal, setShowPrivacyModal] = useState(false)
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
+  const recaptchaRef = useRef(null);
+
+  // Reset de registerError
   useEffect(() => {
     setRegisterError(null);
   }, [resetTrigger]);
+
+  // Renderizar reCAPTCHA
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (window.grecaptcha && recaptchaRef.current) {
+        window.grecaptcha.render(recaptchaRef.current, {
+          sitekey: "6Lej6tgrAAAAAAQevtYjEoZdNDvCEv4K8_V1Ujel",
+        });
+        clearInterval(interval);
+      }
+    }, 500);
+  }, []);
+
+
 
   const calculatePasswordStrength = (password) => {
     const checks = {
@@ -63,6 +82,16 @@ const RegisterForm = ({ resetTrigger }) => {
     setIsLoading(true);
     setRegisterError(null);
 
+    const token = window.grecaptcha.getResponse();
+    if (!token) {
+      toast({
+        title: "⚠️ Falta validação",
+        description: "Confirme que você não é um robô antes de prosseguir.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
     const name = e.target["name"].value.trim();
     const email = e.target["register-email"].value.trim();
     const password = e.target["register-password"].value;
@@ -111,6 +140,10 @@ const RegisterForm = ({ resetTrigger }) => {
     } finally {
       setIsLoading(false);
     }
+
+
+
+
   };
 
   return (
@@ -197,20 +230,20 @@ const RegisterForm = ({ resetTrigger }) => {
           {confirmPassword && (
             <div className="mt-2">
               {password === confirmPassword ? (
-              <div className="text-green-600 text-sm flex items-center gap-2 text-green-600 text-sm">
-          <Check className="h-4 w-4" />
-          <span>As senhas coincidem</span>
-        </div>
-        ) : (
-        <div className="flex items-center gap-2 text-red-600 text-sm">
-          <X className="h-4 w-4" />
-          <span>As senhas não são iguais</span>
-        </div>
-            )}
-      </div>
+                <div className="text-green-600 text-sm flex items-center gap-2 text-green-600 text-sm">
+                  <Check className="h-4 w-4" />
+                  <span>As senhas coincidem</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-red-600 text-sm">
+                  <X className="h-4 w-4" />
+                  <span>As senhas não são iguais</span>
+                </div>
+              )}
+            </div>
           )}
 
-    </div >
+        </div >
 
         <div className="flex items-center space-x-2">
           <Checkbox id="terms" required />
@@ -234,20 +267,26 @@ const RegisterForm = ({ resetTrigger }) => {
           </Label>
         </div>
 
-        <Button
-          type="submit"
-          className="w-full bg-verde hover:bg-verde-escuro"
-          disabled={isLoading}
-        >
-          {isLoading ? "Cadastrando..." : "Cadastrar"}
-        </Button>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
+  <div ref={recaptchaRef}></div>
+</div>
 
-  {
-    registerError && (
-      <p className="text-sm text-red-500 mt-2 text-center">{registerError}</p>
-    )
-  }
-      </form >
+
+
+      <Button
+        type="submit"
+        className="w-full bg-verde hover:bg-verde-escuro"
+        disabled={isLoading}
+      >
+        {isLoading ? "Cadastrando..." : "Cadastrar"}
+      </Button>
+
+      {
+        registerError && (
+          <p className="text-sm text-red-500 mt-2 text-center">{registerError}</p>
+        )
+      }
+    </form >
 
       <TermsModal
         open={showTermsModal}
