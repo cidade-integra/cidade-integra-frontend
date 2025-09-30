@@ -42,7 +42,7 @@ export const students = [
     description:
       "O Cidade Integra tem como missão um objetivo grandioso e desafiador: tornar as cidades mais seguras e saudáveis. Apesar dos obstáculos envolvidos na concretização de nossas metas, assumimos esse compromisso com determinação e estamos empenhados em conduzir a Cidade Integra a patamares cada vez maiores.",
     github: "https://github.com/PedroFerreiraLeite",
-    linkedin: "",
+    linkedin: "https://www.linkedin.com/in/pedro-ferreira-leite-6645b32b6/",
     email: "",
   },
   {
