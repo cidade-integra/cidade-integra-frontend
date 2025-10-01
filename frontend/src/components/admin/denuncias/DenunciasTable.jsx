@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Eye, CheckCircle, XCircle, Loader2, MessageCircleQuestion, CircleAlert, CircleChevronRight, CircleArrowRightIcon, CircleArrowOutDownRight, CircleMinus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Eye, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -83,7 +83,6 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
       <Table>
         <TableHeader>
           <TableRow>
-            {/*<TableHead>ID</TableHead> */}
             <TableHead>Título</TableHead>
             <TableHead>Local</TableHead>
             <TableHead>Data</TableHead>
@@ -104,9 +103,6 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
           ) : (
             denuncias.map((denuncia) => (
               <TableRow key={denuncia.reportId}>
-                {/* <TableCell className="font-medium">
-                  {denuncia.reportId} 
-                </TableCell> */}
                 <TableCell>
                   <Link
                     to={`/denuncias/${denuncia.reportId}`}
@@ -115,8 +111,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                     {denuncia.title}
                   </Link>
                 </TableCell>
-
-
+                
                 <TableCell>{denuncia.location?.address}</TableCell>
                 <TableCell>
                   {new Date(
@@ -155,7 +150,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="review" className="text-blue-600 hover:text-blue-800">
-                        <CheckCircle className="h-4 w-4 mr-1 inline" /> Em Análise
+                        <CircleMinus className="h-4 w-4 mr-1 inline" /> Em Análise
                       </SelectItem>
                       <SelectItem value="resolved" className="text-green-600 hover:text-green-800">
                         <CheckCircle className="h-4 w-4 mr-1 inline" /> Resolver
