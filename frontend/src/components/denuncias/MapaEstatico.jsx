@@ -1,27 +1,51 @@
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+import { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
-const MapaEstatico = ({local}) => {
-    const mapUrl = ``
+const MapaEstatico = ({ local }) => {
+    const [coords, setCoords] = useState(null);
+
+    useEffect(() => {
+        if (!local) return;
+        // Consulta à API Nominatim para geocodificação
+        fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(local)}`
+        )
+            .then((res) => res.json())
+            .then((data) => {
+                if (data && data.length > 0) {
+                    setCoords({
+                        lat: parseFloat(data[0].lat),
+                        lng: parseFloat(data[0].lon),
+                    });
+                }
+            });
+    }, [local]);
 
     return (
-        <div className={`rounded-lg overflow-hidden border mb-4`}>
-            <AspectRatio ratio={3/2}>
-                <div className="ralitive w-full h-full">
-                    <img 
-                        src={mapUrl} 
-                        alt={`Mapa da Localização: ${local}`} 
-                        className="w-full h-full object-cover"    
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"/>
-                    <div className="absolute bottom-2 left-2 right-2">
-                        <p className="text-xs text-white bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
-                            📍{local}
-                        </p>
+        <>
+            {coords ? (
+                <div className="rounded-lg overflow-hidden border mb-4">
+                    <MapContainer
+                        center={[coords.lat, coords.lng]}
+                        zoom={30}
+                        style={{ width: "100%", height: "200px" }}
+                        scrollWheelZoom={false}
+                    >
+                        <TileLayer
+                            attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a>'
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                        <Marker position={[coords.lat, coords.lng]}>
+                            <Popup>
+                                📍{local}
+                            </Popup>
+                        </Marker>
+                    </MapContainer>
                     </div>
-                </div>
-            </AspectRatio>
-        </div>
-    )
-}
+            ) : null}
+        </>
+    );
+};
 
-export default MapaEstatico
+export default MapaEstatico;

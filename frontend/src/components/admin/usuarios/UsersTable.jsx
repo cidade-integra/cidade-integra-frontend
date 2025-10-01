@@ -75,7 +75,6 @@ const UsersTable = ({ users }) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
             <TableHead>Nome</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Função</TableHead>
@@ -94,7 +93,6 @@ const UsersTable = ({ users }) => {
           ) : (
             users.map((user) => (
               <TableRow key={user.uid}>
-                <TableCell className="font-medium">{user.uid}</TableCell>
                 <TableCell>{user.uid === currentUser?.uid && "(Você)" || user.displayName}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell><UserRoleBadge role={user.role} /></TableCell>

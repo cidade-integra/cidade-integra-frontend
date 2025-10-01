@@ -9,6 +9,7 @@ import {
   LogOut,
   Plus,
   BookOpen,
+  Building2,
 } from "lucide-react"
 
 const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
@@ -69,7 +70,7 @@ const MobileMenu = ({ user, onClickItem, onLogout, isLoggingOut }) => {
         aria-current={isActiveRoute("/sobre") ? "page" : undefined}
         tabIndex={0}
       >
-        <User size={18} aria-hidden="true" />
+        <Building2 size={18} aria-hidden="true" />
         <span>Sobre</span>
       </Link>
 

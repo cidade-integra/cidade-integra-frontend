@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Mail, Lock, X, Eye, EyeOff, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import useAuthentication from "@/hooks/UseAuthentication";
 import { z } from "zod";
-import TermsModal from "@/components/ui/terms-modal"
-
+import TermsModal from "@/components/ui/terms-modal";
+import { useRef } from "react";
 
 const RegisterForm = ({ resetTrigger }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,12 +24,30 @@ const RegisterForm = ({ resetTrigger }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const [showTermsModal, setShowTermsModal] = useState(false)
-  const [showPrivacyModal, setShowPrivacyModal] = useState(false)
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
+  const recaptchaRef = useRef(null);
+
+  // Reset de registerError
   useEffect(() => {
     setRegisterError(null);
   }, [resetTrigger]);
+
+  // Renderizar reCAPTCHA
+  useEffect(() => {
+    let rendered = false;
+    const interval = setInterval(() => {
+      if (window.grecaptcha && recaptchaRef.current && !rendered) {
+        window.grecaptcha.render(recaptchaRef.current, {
+          sitekey: "6Lej6tgrAAAAAAQevtYjEoZdNDvCEv4K8_V1Ujel",
+        });
+        rendered = true;
+        clearInterval(interval);
+      }
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
 
   const calculatePasswordStrength = (password) => {
     const checks = {
@@ -43,7 +61,12 @@ const RegisterForm = ({ resetTrigger }) => {
   const registerSchema = z.object({
     name: z
       .string()
-      .min(1, "Por favor, preencha seu nome completo."),
+      .min(3, "O nome deve ter pelo menos 3 caracteres.")
+      .max(60, "O nome deve ter no máximo 60 caracteres.")
+      .regex(/^[A-Za-zÀ-ÿ\s]+$/, "O nome deve conter apenas letras e espaços.")
+      .refine((val) => val.trim().length > 0, {
+        message: "Por favor, preencha seu nome completo.",
+      }),
     email: z
       .string()
       .email("Por favor, insira um e-mail válido."),
@@ -63,6 +86,16 @@ const RegisterForm = ({ resetTrigger }) => {
     setIsLoading(true);
     setRegisterError(null);
 
+    const token = window.grecaptcha.getResponse();
+    if (!token) {
+      toast({
+        title: "⚠️ Falta validação",
+        description: "Confirme que você não é um robô antes de prosseguir.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
     const name = e.target["name"].value.trim();
     const email = e.target["register-email"].value.trim();
     const password = e.target["register-password"].value;
@@ -118,7 +151,7 @@ const RegisterForm = ({ resetTrigger }) => {
       <form onSubmit={handleRegister} className="space-y-4 mb-6">
         <div className="space-y-2">
           <Label htmlFor="name">Nome completo</Label>
-          <Input id="name" name="name" placeholder="Seu nome completo" required />
+          <Input id="name" name="name" placeholder="Seu nome completo" required maxLength={60} />
         </div>
 
         <div className="space-y-2">
@@ -197,20 +230,20 @@ const RegisterForm = ({ resetTrigger }) => {
           {confirmPassword && (
             <div className="mt-2">
               {password === confirmPassword ? (
-              <div className="text-green-600 text-sm flex items-center gap-2 text-green-600 text-sm">
-          <Check className="h-4 w-4" />
-          <span>As senhas coincidem</span>
-        </div>
-        ) : (
-        <div className="flex items-center gap-2 text-red-600 text-sm">
-          <X className="h-4 w-4" />
-          <span>As senhas não são iguais</span>
-        </div>
-            )}
-      </div>
+                <div className="flex items-center gap-2 text-green-600 text-sm">
+                  <Check className="h-4 w-4" />
+                  <span>As senhas coincidem</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-red-600 text-sm">
+                  <X className="h-4 w-4" />
+                  <span>As senhas não são iguais</span>
+                </div>
+              )}
+            </div>
           )}
 
-    </div >
+        </div >
 
         <div className="flex items-center space-x-2">
           <Checkbox id="terms" required />
@@ -234,19 +267,22 @@ const RegisterForm = ({ resetTrigger }) => {
           </Label>
         </div>
 
+        <div ref={recaptchaRef}></div>
+
         <Button
           type="submit"
           className="w-full bg-verde hover:bg-verde-escuro"
           disabled={isLoading}
+          onClick={() => window.grecaptcha.execute()}
         >
           {isLoading ? "Cadastrando..." : "Cadastrar"}
         </Button>
 
-  {
-    registerError && (
-      <p className="text-sm text-red-500 mt-2 text-center">{registerError}</p>
-    )
-  }
+        {
+          registerError && (
+            <p className="text-sm text-red-500 mt-2 text-center">{registerError}</p>
+          )
+        }
       </form >
 
       <TermsModal
