@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { Eye, CheckCircle, XCircle, Loader2, MessageCircleQuestion, CircleAlert, CircleChevronRight, CircleArrowRightIcon, CircleArrowOutDownRight, CircleMinus } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -125,7 +125,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                     {loading ? (
                       <Loader2 className="h-4 w-4 mr-1 animate-spin" />
                     ) : (
-                      <CheckCircle className="h-4 w-4 mr-1" />
+                      <CircleMinus className="h-4 w-4 mr-1" />
                     )}
                     Em Análise
                   </Button>
