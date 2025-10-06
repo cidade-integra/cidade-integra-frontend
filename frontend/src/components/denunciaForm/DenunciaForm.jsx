@@ -41,7 +41,30 @@ const DenunciaForm = () => {
       });
       return;
     }
-  
+
+    // Monta o endereço para consulta
+    const enderecoBusca = values.cep
+      ? `${values.local}, ${values.cep}`
+      : values.local;
+
+    let latitude = 0;
+    let longitude = 0;
+
+    // Busca coordenadas no Nominatim
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(enderecoBusca)}`
+      );
+      const data = await response.json();
+      if (data && data.length > 0) {
+        latitude = parseFloat(data[0].lat);
+        longitude = parseFloat(data[0].lon);
+      }
+    } catch (e) {
+      // Se der erro, mantém 0, 0
+      console.warn("Não foi possível obter coordenadas:", e);
+    }
+
     const report = {
       title: values.titulo,
       description: values.descricao,
@@ -49,24 +72,24 @@ const DenunciaForm = () => {
       isAnonymous: values.anonima,
       userId: user.uid,
       location: {
-        latitude: 0,
-        longitude: 0,
+        latitude,
+        longitude,
         address: values.local,
         ...(values.cep ? { postalCode: values.cep } : {}),
       },
-      ...(previewImages.length > 0 && { imagemFiles: previewImages }), // plural e array
+      ...(previewImages.length > 0 && { imagemFiles: previewImages }),
     };
-  
+
     setIsSubmitting(true);
-  
+
     try {
       await createReport(report);
-  
+
       toast({
         title: "🌳 Denúncia enviada com sucesso!",
         description: "Sua denúncia foi registrada e será analisada em breve.",
       });
-  
+
       form.reset();
       setPreviewImages(null);
       navigate("/denuncias");
@@ -81,7 +104,6 @@ const DenunciaForm = () => {
       setIsSubmitting(false);
     }
   };
-  
 
   return (
     <div className="container mx-auto px-4 py-10">

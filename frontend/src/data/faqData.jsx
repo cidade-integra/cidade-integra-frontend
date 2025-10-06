@@ -23,6 +23,12 @@ export const faqCategories = [
         answer:
           "Não! O Cidade Integra é uma plataforma totalmente gratuita para todos os cidadãos. Nosso objetivo é facilitar a comunicação entre a população e os órgãos públicos responsáveis por solucionar os problemas reportados.",
       },
+      {
+        id: "item-4",
+        question: "Como o Cidade Integra lida com as minhas informações?",
+        answer:
+            "No Cidade Integra, levamos a sua privacidade a sério. As informações que você compartilha como nome, e-mail, localização e fotos dos problemas reportados são utilizadas exclusivamente para encaminhar suas denúncias aos órgãos competentes, manter você informado sobre o andamento e melhorar continuamente a plataforma.",
+      },
     ],
   },
   {

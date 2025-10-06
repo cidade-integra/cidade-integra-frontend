@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { Eye, CheckCircle, XCircle, Loader2, MessageCircleQuestion, CircleAlert, CircleChevronRight, CircleArrowRightIcon, CircleArrowOutDownRight, CircleMinus } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -29,6 +30,17 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
 
   // Estado para controlar o modal de rejeição
   const [modalRejeitar, setModalRejeitar] = useState({
+    open: false,
+    reportId: null,
+  });
+
+  // Estado para controlar o modal de Em Analise
+  const [modalEmAnalise, setModalEmAnalise] = useState({
+    open: false,
+    reportId: null,
+  });
+  // Estado para controlar o modal de resolver
+  const [modalResolver, setModalResolver] = useState({
     open: false,
     reportId: null,
   });
@@ -71,12 +83,11 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
             <TableHead>Título</TableHead>
             <TableHead>Local</TableHead>
             <TableHead>Data</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="text-right">Ações</TableHead>
+            <TableHead>Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -92,10 +103,15 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
           ) : (
             denuncias.map((denuncia) => (
               <TableRow key={denuncia.reportId}>
-                <TableCell className="font-medium">
-                  {denuncia.reportId}
+                <TableCell>
+                  <Link
+                    to={`/denuncias/${denuncia.reportId}`}
+                    className="text-black font-medium hover:underline hover:text-green-600"
+                  >
+                    {denuncia.title}
+                  </Link>
                 </TableCell>
-                <TableCell>{denuncia.title}</TableCell>
+                
                 <TableCell>{denuncia.location?.address}</TableCell>
                 <TableCell>
                   {new Date(
@@ -105,63 +121,45 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
                 <TableCell>
                   <DenunciaStatusBadge status={denuncia.status} />
                 </TableCell>
-                <TableCell className="text-right flex flex-col space-y-2">
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link to={`/denuncias/${denuncia.reportId}`}>
-                      <Eye className="h-4 w-4 mr-1" />
-                      Ver
-                    </Link>
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-blue-500 hover:bg-blue-500/10 hover:text-blue-500"
-                    onClick={() =>
-                      handleUpdateStatus(denuncia.reportId, "review")
-                    }
+                <TableCell className="text-right">
+                  <Select
+                    onValueChange={async (value) => {
+                      if (value === "view") {
+                        window.location.href = `/denuncias/${denuncia.reportId}`;
+                      } else if (value === "review") {
+                        setModalEmAnalise({
+                          open: true,
+                          reportId: denuncia.reportId,
+                        });
+                      } else if (value === "resolved") {
+                        setModalResolver({
+                          open: true,
+                          reportId: denuncia.reportId,
+                        });
+                      } else if (value === "rejected") {
+                        setModalRejeitar({
+                          open: true,
+                          reportId: denuncia.reportId,
+                        });
+                      }
+                    }}
                     disabled={loading}
                   >
-                    {loading ? (
-                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                    ) : (
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                    )}
-                    Em Análise
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-verde hover:text-verde hover:bg-verde/10"
-                    onClick={() =>
-                      handleUpdateStatus(denuncia.reportId, "resolved")
-                    }
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                    ) : (
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                    )}
-                    Resolver
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-vermelho hover:text-vermelho hover:bg-vermelho/10"
-                    onClick={() =>
-                      setModalRejeitar({
-                        open: true,
-                        reportId: denuncia.reportId,
-                      })
-                    }
-                    disabled={loading}
-                  >
-                    <XCircle className="h-4 w-4 mr-1" />
-                    Rejeitar
-                  </Button>
+                    <SelectTrigger className="w-36">
+                      <SelectValue placeholder="Alterar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="review" className="text-blue-600 hover:text-blue-800">
+                        <CircleMinus className="h-4 w-4 mr-1 inline" /> Em Análise
+                      </SelectItem>
+                      <SelectItem value="resolved" className="text-green-600 hover:text-green-800">
+                        <CheckCircle className="h-4 w-4 mr-1 inline" /> Resolver
+                      </SelectItem>
+                      <SelectItem value="rejected" className="text-red-600 hover:text-red-800">
+                        <XCircle className="h-4 w-4 mr-1 inline" /> Rejeitar
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </TableCell>
               </TableRow>
             ))
@@ -169,7 +167,79 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
         </TableBody>
       </Table>
 
-      {/* Modal de confirmação */}
+
+
+      {/* Modal de confirmação - Em Analise*/}
+      <Dialog
+        open={modalEmAnalise.open}
+        onOpenChange={(open) =>
+          setModalEmAnalise((v) => ({ ...v, open }))
+        }
+      >
+        <DialogContent>
+          <DialogTitle>Analisar denúncia - #{modalEmAnalise.reportId}</DialogTitle>
+          <DialogDescription>
+            Tem certeza que deseja marcar a denúncia '<i>{
+              denuncias.find(d => d.reportId === modalEmAnalise.reportId)?.title
+            }</i>' como <b>Em Análise</b>?
+          </DialogDescription>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setModalEmAnalise({ open: false, reportId: null })}
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="bg-blue-500 hover:bg-blue-600"
+              onClick={async () => {
+                await handleUpdateStatus(modalEmAnalise.reportId, "review");
+                setModalEmAnalise({ open: false, reportId: null });
+              }}
+              disabled={loading}
+            >
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de confirmação - Resolver*/}
+      <Dialog
+        open={modalResolver.open}
+        onOpenChange={(open) =>
+          setModalResolver((v) => ({ ...v, open }))
+        }
+      >
+        <DialogContent>
+          <DialogTitle>Resolver denúncia - #{modalResolver.reportId}</DialogTitle>
+          <DialogDescription>
+            Tem certeza que deseja marcar a denúncia '<i>{
+              denuncias.find(d => d.reportId === modalResolver.reportId)?.title
+            }</i>' como <b>Resolvida</b>?
+          </DialogDescription>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setModalResolver({ open: false, reportId: null })}
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="bg-verde hover:bg-verde-escuro"
+              onClick={async () => {
+                await handleUpdateStatus(modalResolver.reportId, "resolved");
+                setModalResolver({ open: false, reportId: null });
+              }}
+              disabled={loading}
+            >
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de confirmação - Rejeitar*/}
       <Dialog
         open={modalRejeitar.open}
         onOpenChange={(open) =>
@@ -177,9 +247,11 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
         }
       >
         <DialogContent>
-          <DialogTitle>Confirmar rejeição</DialogTitle>
+          <DialogTitle>Rejeitar denúncia - #{modalRejeitar.reportId}</DialogTitle>
           <DialogDescription>
-            Tem certeza que deseja marcar esta denúncia como <b>rejeitada</b>?
+            Tem certeza que deseja <b>rejeitar</b> a denúncia: <i>{
+              denuncias.find(d => d.reportId === modalRejeitar.reportId)?.title
+            }</i>?
           </DialogDescription>
           <DialogFooter>
             <Button
@@ -189,7 +261,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
               Cancelar
             </Button>
             <Button
-              variant="destructive"
+              className="bg-vermelho hover:bg-red-900"
               onClick={async () => {
                 await handleUpdateStatus(modalRejeitar.reportId, "rejected");
                 setModalRejeitar({ open: false, reportId: null });
@@ -201,6 +273,7 @@ const DenunciasTable = ({ denuncias, setDenuncias }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
     </div>
   );
 };
