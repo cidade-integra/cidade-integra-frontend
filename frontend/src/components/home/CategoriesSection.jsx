@@ -18,7 +18,8 @@ const CategoriesSection = () => {
               icon={category.icon}
               title={category.title}
               description={category.description}
-              link={category.link}
+              link="/denuncias"
+              //link={category.link}
             />
           ))}
         </div>
