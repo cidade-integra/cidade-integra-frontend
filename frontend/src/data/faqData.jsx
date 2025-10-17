@@ -135,7 +135,7 @@ export const faqCategories = [
             </Link>{" "}
             e depois na opção{" "}
             <Link
-              to="/login"
+              to="/recuperar-senha"
               className="text-verde font-bold hover:text-verde-escuro hover:underline"
             >
               Esqueceu a senha?
