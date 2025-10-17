@@ -9,6 +9,8 @@ import {
   limit,
   startAfter,
   getDocs,
+  deleteDoc,
+  doc,
 } from "firebase/firestore";
 import { db } from "../firebase/config"; 
 import {useCurrentUser} from "@/hooks/useCurrentUser";
@@ -36,10 +38,14 @@ export function useReportComments(reportId, pageSize = 5) {
 
     getDocs(q)
       .then((snapshot) => {
-        const fetchedComments = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const fetchedComments = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            isOwner: !!user && data.authorId === user?.uid, // adiciona isOwner
+          };
+        });
         setHasMore(fetchedComments.length > pageSize);
         setComments(fetchedComments.slice(0, pageSize));
         setLastDoc(snapshot.docs[Math.min(pageSize - 1, snapshot.docs.length - 1)]);
@@ -66,10 +72,14 @@ export function useReportComments(reportId, pageSize = 5) {
 
     try {
       const snapshot = await getDocs(q);
-      const fetchedComments = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const fetchedComments = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          isOwner: user && data.authorId === user.uid, // adiciona isOwner
+        };
+      });
       setHasMore(fetchedComments.length > pageSize);
       setComments((prev) => [...prev, ...fetchedComments.slice(0, pageSize)]);
       setLastDoc(snapshot.docs[Math.min(pageSize - 1, snapshot.docs.length - 1)]);
@@ -111,6 +121,41 @@ export function useReportComments(reportId, pageSize = 5) {
     [reportId, user, toast]
   );
 
+  const deleteComment = useCallback(
+    async (commentId) => {
+      try {
+        if (!reportId) throw new Error("reportId não informado.");
+        if (!commentId) throw new Error("commentId não informado.");
+
+        const commentDocRef = doc(
+          db,
+          REPORT_COLLECTION,
+          reportId,
+          COMMENTS_SUBCOLLECTION,
+          commentId
+        );
+        await deleteDoc(commentDocRef);
+
+        // Remove o comentário da lista localmente
+        setComments((prev) => prev.filter((c) => c.id !== commentId));
+
+        toast({
+          title: "Comentário excluído",
+          description: "O comentário foi removido com sucesso.",
+          status: "success",
+        });
+      } catch (err) {
+        toast({
+          title: "❌ Erro ao excluir comentário",
+          description: err.message,
+          status: "error",
+        });
+        throw err;
+      }
+    },
+    [reportId, toast]
+  );
+
   return {
     comments,
     loading,
@@ -118,5 +163,6 @@ export function useReportComments(reportId, pageSize = 5) {
     addComment,
     loadMore,
     hasMore,
+    deleteComment,
   };
 }

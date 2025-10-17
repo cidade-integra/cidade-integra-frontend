@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, User } from "lucide-react";
+import { MessageSquare, User, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReportComments } from "@/hooks/useReportComments";
+import {useCurrentUser} from "@/hooks/useCurrentUser";
 
 const BLOCKED_WORDS = [
   "merda",
@@ -45,11 +46,14 @@ export default function ComentarioCard({ reportId, scrollToCommentInput }) {
     addComment,
     loadMore,
     hasMore,
+    deleteComment,
   } = useReportComments(reportId, PAGE_SIZE);
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
   const textareaRef = useRef(null);
+  const { user } = useCurrentUser();
 
   const MAX_LENGTH = 500;
   const MIN_LENGTH = 5;
@@ -220,6 +224,28 @@ export default function ComentarioCard({ reportId, scrollToCommentInput }) {
                   >
                     {comment.message}
                   </p>
+
+                  {/* Botão de excluir para o autor do comentário ou admin */}
+                  {(comment.isOwner || user?.role === "admin") && (
+                    <div className="flex justify-end mt-2">
+                      <Button
+                        size="xs"
+                        variant="destructive"
+                        disabled={deletingId === comment.id}
+                        onClick={async () => {
+                          setDeletingId(comment.id);
+                          try {
+                            await deleteComment(comment.id);
+                          } catch {}
+                          setDeletingId(null);
+                        }}
+                        className="flex items-center gap-1"
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        {deletingId === comment.id ? "Excluindo..." : "Excluir"}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
