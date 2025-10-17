@@ -5,17 +5,12 @@ const BadgesDisplay = ({ user }) => {
 
   if (badges.length === 0) return null
 
+  const lastBadge = badges[badges.length - 1]
+
   return (
-    <>
-      {badges.map((badge) => (
-        <span
-          key={badge.id}
-          className="font-semibold"
-        >
-          {badge.label}
-        </span>
-      ))}
-    </>
+    <span className="font-semibold">
+      {lastBadge.label}
+    </span>
   )
 }
 
