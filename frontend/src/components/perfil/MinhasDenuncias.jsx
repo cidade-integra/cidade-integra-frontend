@@ -111,16 +111,16 @@ const MinhasDenuncias = () => {
         </Card>
       ) : (
         filteredDenuncias.length === 0 ? (
-        <div className="text-center py-10 text-muted-foreground">
-          <p>Nenhuma Denuncia Encontrada</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredDenuncias.map((denuncia) => (
-            <CardDenuncia key={denuncia.reportId} denuncia={denuncia} />
-          ))}
-        </div>
-      ))}
+          <div className="text-center py-10 text-muted-foreground">
+            <p>Nenhuma denúncia encontrada para este filtro.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredDenuncias.map((denuncia) => (
+              <CardDenuncia key={denuncia.reportId} denuncia={denuncia} />
+            ))}
+          </div>
+        ))}
 
       {/* DENÚNCIAS SALVAS */}
       <h2 className="text-2xl font-semibold mt-10 mb-4 flex items-center gap-2">
