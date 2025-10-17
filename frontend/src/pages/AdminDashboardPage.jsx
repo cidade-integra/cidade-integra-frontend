@@ -28,7 +28,7 @@ const AdminDashboardPage = () => {
             <Card className="shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="bg-blue-50 border-b">
                 <div className="flex items-center gap-2">
-                  <Bell className="h-6 w-6 text-azul" />
+                  <Bell className="h-6 w-6 text-verde" />
                   <CardTitle>Gerenciar Denúncias</CardTitle>
                 </div>
                 <CardDescription>
