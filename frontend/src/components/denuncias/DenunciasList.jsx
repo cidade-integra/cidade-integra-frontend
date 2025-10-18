@@ -80,25 +80,25 @@ const DenunciasList = () => {
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  className="pointer-events-none opacity-50  cursor-pointer"
                 />
               </PaginationItem>
 
               {currentPage > 1 && (
                 <PaginationItem>
-                  <PaginationLink onClick={() => setCurrentPage(currentPage - 1)}>
+                  <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(currentPage - 1)}>
                     {currentPage - 1}
                   </PaginationLink>
                 </PaginationItem>
               )}
 
               <PaginationItem>
-                <PaginationLink isActive>{currentPage}</PaginationLink>
+                <PaginationLink isActive className="cursor-pointer">{currentPage}</PaginationLink>
               </PaginationItem>
 
               {currentPage < totalPages && (
                 <PaginationItem>
-                  <PaginationLink onClick={() => setCurrentPage(currentPage + 1)}>
+                  <PaginationLink className="cursor-pointer" onClick={() => setCurrentPage(currentPage + 1)}>
                     {currentPage + 1}
                   </PaginationLink>
                 </PaginationItem>
