@@ -19,13 +19,12 @@ const CategoriesSection = () => {
               title={category.title}
               description={category.description}
               link="/denuncias"
-              //link={category.link}
             />
           ))}
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default CategoriesSection;
+export default CategoriesSection
