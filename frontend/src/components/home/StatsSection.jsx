@@ -49,7 +49,7 @@ const StatsSection = () => {
       label: "Dias em Média para Solução",
       link: null,
     },
-  ];
+  ]
 
   return (
     <section className="py-16">
@@ -92,9 +92,9 @@ const StatsSection = () => {
                   </CardContent>
                 </Card>
               </CardWrapper>
-            );
+            )
           })}
-          ;
+          
         </div>
       </div>
     </section>
