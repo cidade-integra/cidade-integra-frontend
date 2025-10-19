@@ -82,7 +82,15 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-verde">Contato</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              <a
+                href="mailto:suporte@cidadeintegra.com"
+                className="text-verde hover:text-verde-escuro transition-colors"
+                aria-label="Enviar email para suporte@cidadeintegra.com"
+              >
+                Contato
+              </a>
+            </h3>
             <p className="text-cinza">
               Para suporte ou informações adicionais:
               <br />
